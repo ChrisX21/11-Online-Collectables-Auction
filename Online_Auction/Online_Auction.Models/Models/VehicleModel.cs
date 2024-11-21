@@ -7,6 +7,12 @@ namespace Online_Auction.Models.Models;
 
 public class VehicleModel
 {
+    public VehicleModel()
+    {
+        Images = new List<string>();
+        Features = new List<string>();
+    }
+    
     [Key]
     public int Id { get; set; }
     [Required]
@@ -23,9 +29,10 @@ public class VehicleModel
     [Required]
     public FuelType FuelType { get; set; }
     public int HorsePower { get; set; }
+    [Required]
     public ICollection<string> Images { get; set; }
     [Required]
-    [MaxLength((VehicleConstants.MaxLengthDescritpion))]
+    [MaxLength((VehicleConstants.MaxLengthDescription))]
     public string Description { get; set; }
     public HullMaterials HullMaterial { get; set; }
     public ICollection<string> Features { get; set; }

@@ -6,6 +6,7 @@ public class ManufacturerModel
 {
     [Key]
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string LogoUrl { get; set; }
+    [Required]
+    public string Name { get; set; } = null!;
+    public string LogoUrl { get; set; } = null!;
 }
