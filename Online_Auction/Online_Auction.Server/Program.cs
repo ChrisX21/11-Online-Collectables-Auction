@@ -1,6 +1,6 @@
-
 using Microsoft.EntityFrameworkCore;
-using Online_Auction.Server.Data;
+using Online_Auction.Models;
+using Online_Auction.Models.Models;
 
 namespace Online_Auction.Server
 {
@@ -16,10 +16,7 @@ namespace Online_Auction.Server
             builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             
