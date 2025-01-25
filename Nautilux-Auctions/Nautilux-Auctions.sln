@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions", "Nautilux-Auctions\Nautilux-Auctions.csproj", "{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

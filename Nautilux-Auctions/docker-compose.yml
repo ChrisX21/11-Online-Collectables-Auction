@@ -1,0 +1,23 @@
+services:
+  nautilux-auctions:
+    image: ${DOCKER_REGISTRY-}nautiluxauctions
+    build:
+      context: .
+      dockerfile: Nautilux-Auctions/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      ACCEPT_EULA: "Y"    
+      SA_PASSWORD: "saPass1212"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:
