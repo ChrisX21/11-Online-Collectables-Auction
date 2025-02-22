@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions", "Nautilux-Auctions\Nautilux-Auctions.csproj", "{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.API", "Nautilux-Auctions\Nautilux-Auctions.API.csproj", "{1CBC13F0-6695-4FD7-8A21-3A0C8F85A682}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Domain", "..\Nautilux-Auctions.Domain\Nautilux-Auctions.Domain.csproj", "{9ABEBA7C-97C6-4207-9B7F-44E0B791F07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Infrastructure", "..\Nautilux-Auctions.Infrastructure\Nautilux-Auctions.Infrastructure.csproj", "{52D3CBD0-DC05-4446-95FC-0E28688C8BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Application", "..\Nautilux-Auctions.Application\Nautilux-Auctions.Application.csproj", "{24259DF3-423B-4253-9335-9F6718B84457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07EA8A2C-C650-4CC1-A8FF-B37C3C1092F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABEBA7C-97C6-4207-9B7F-44E0B791F07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABEBA7C-97C6-4207-9B7F-44E0B791F07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABEBA7C-97C6-4207-9B7F-44E0B791F07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABEBA7C-97C6-4207-9B7F-44E0B791F07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52D3CBD0-DC05-4446-95FC-0E28688C8BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52D3CBD0-DC05-4446-95FC-0E28688C8BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52D3CBD0-DC05-4446-95FC-0E28688C8BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52D3CBD0-DC05-4446-95FC-0E28688C8BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24259DF3-423B-4253-9335-9F6718B84457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24259DF3-423B-4253-9335-9F6718B84457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24259DF3-423B-4253-9335-9F6718B84457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24259DF3-423B-4253-9335-9F6718B84457}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
