@@ -2,12 +2,16 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <header className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl md:text-6xl font-bold text-blue-900 text-center">
-          Nautilux Auctions
-        </h1>
-        <p className="text-xl text-gray-600 text-center mt-4">
-          Premier Marketplace for Exclusive Collectible Boats
-        </p>
+        <div className="flex justify-between items-center mb-8 text-center">
+          <h1 className=" text-4xl md:text-6xl font-bold text-blue-900">
+            Nautilux Auctions
+          </h1>
+        </div>
+        <div className="flex justify-center items-center">
+          <p className="text-xl text-gray-600 text-center mt-4">
+            Premier Marketplace for Exclusive Collectible Boats
+          </p>
+        </div>
       </header>
 
       <section className="container mx-auto px-4 py-12">
