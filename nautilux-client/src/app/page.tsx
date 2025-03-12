@@ -2,13 +2,13 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <header className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8 text-center">
+        <div className="flex justify-between items-center mb-2 text-center">
           <h1 className=" text-4xl md:text-6xl font-bold text-blue-900">
             Nautilux Auctions
           </h1>
         </div>
-        <div className="flex justify-center items-center">
-          <p className="text-xl text-gray-600 text-center mt-4">
+        <div className="flex items-center">
+          <p className="text-xl text-gray-600">
             Premier Marketplace for Exclusive Collectible Boats
           </p>
         </div>

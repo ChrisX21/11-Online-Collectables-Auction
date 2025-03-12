@@ -1,15 +1,18 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import ThemeSwitcher from "./theme-switcher";
-import { FaUser, FaSearch, FaHeart } from "react-icons/fa";
+import { FaSearch, FaHeart } from "react-icons/fa";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
-
+  const isAuthenticated = false;
+  const user = {
+    userName: "John Doe",
+  };
+  const logout = () => {
+    console.log("logout");
+  };
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md">
       <div className="container mx-auto px-4 py-3">

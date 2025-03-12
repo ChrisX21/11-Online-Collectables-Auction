@@ -2,13 +2,13 @@
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-gray-200 dark:bg-gray-950 text-gray-800 dark:text-gray-300">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-white text-lg font-semibold">
+            <h3 className="text-gray-900 dark:text-white text-lg font-semibold">
               Nautilux Auctions
             </h3>
             <p className="text-sm">
@@ -19,25 +19,39 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <h4 className="text-gray-900 dark:text-white font-semibold mb-4">
+              Quick Links
+            </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/auctions" className="hover:text-white transition">
+                <a
+                  href="/auctions"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   Current Auctions
                 </a>
               </li>
               <li>
-                <a href="/sell" className="hover:text-white transition">
+                <a
+                  href="/sell"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   Sell Your Boat
                 </a>
               </li>
               <li>
-                <a href="/how-it-works" className="hover:text-white transition">
+                <a
+                  href="/how-it-works"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   How It Works
                 </a>
               </li>
               <li>
-                <a href="/faqs" className="hover:text-white transition">
+                <a
+                  href="/faqs"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   FAQs
                 </a>
               </li>
@@ -46,25 +60,39 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Support</h4>
+            <h4 className="text-gray-900 dark:text-white font-semibold mb-4">
+              Support
+            </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/contact" className="hover:text-white transition">
+                <a
+                  href="/contact"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="/about" className="hover:text-white transition">
+                <a
+                  href="/about"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   About Us
                 </a>
               </li>
               <li>
-                <a href="/terms" className="hover:text-white transition">
+                <a
+                  href="/terms"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="hover:text-white transition">
+                <a
+                  href="/privacy"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+                >
                   Privacy Policy
                 </a>
               </li>
@@ -73,14 +101,16 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Connect With Us</h4>
+            <h4 className="text-gray-900 dark:text-white font-semibold mb-4">
+              Connect With Us
+            </h4>
             <div className="space-y-2">
               <p className="text-sm">Email: contact@nautilux.com</p>
               <p className="text-sm">Phone: (555) 123-4567</p>
               <div className="flex space-x-4 mt-4">
                 <a
                   href="https://facebook.com"
-                  className="hover:text-white transition"
+                  className="text-gray-700 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
                 >
                   <span className="sr-only">Facebook</span>
                   <svg
@@ -97,7 +127,7 @@ export default function Footer() {
                 </a>
                 <a
                   href="https://twitter.com"
-                  className="hover:text-white transition"
+                  className="text-gray-700 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
                 >
                   <span className="sr-only">Twitter</span>
                   <svg
@@ -110,7 +140,7 @@ export default function Footer() {
                 </a>
                 <a
                   href="https://linkedin.com"
-                  className="hover:text-white transition"
+                  className="text-gray-700 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
                 >
                   <span className="sr-only">LinkedIn</span>
                   <svg
@@ -131,8 +161,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <p className="text-sm text-center">
+        <div className="mt-12 pt-8 border-t border-gray-300 dark:border-gray-800">
+          <p className="text-sm text-center text-gray-700 dark:text-gray-400">
             © {new Date().getFullYear()} Nautilux Auctions. All rights reserved.
           </p>
         </div>

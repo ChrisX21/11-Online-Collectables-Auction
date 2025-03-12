@@ -18,7 +18,7 @@ export default function SignIn() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/signin", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export default function SignIn() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/catalog");
     } catch (error) {
       setError("An unexpected error occurred");
     } finally {
