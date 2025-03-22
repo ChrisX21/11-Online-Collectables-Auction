@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Nautilux_Auctions.Handlers;
 using Nautilux_Auctions.Application.Services;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Nautilux_Auctions
 {
@@ -46,6 +47,17 @@ namespace Nautilux_Auctions
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            var corsPolicy = "_allowFrontend";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: corsPolicy, policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
@@ -103,6 +115,7 @@ namespace Nautilux_Auctions
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors(corsPolicy);
 
 
             app.MapControllers();
