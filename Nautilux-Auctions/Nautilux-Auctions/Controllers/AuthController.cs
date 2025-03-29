@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nautilux_Auctions.Application.Abstracts;
+using Nautilux_Auctions.Domain.DTO;
 using Nautilux_Auctions.Domain.Requests;
 
 namespace Nautilux_Auctions.Controllers
@@ -40,16 +41,42 @@ namespace Nautilux_Auctions.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(HttpContext httpContext)
+        public async Task<IActionResult> Refresh()
         {
-            var refreshToken =httpContext.Request.Cookies["REFRESH_TOKEN"];
+            var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
 
             await _accountService.RefreshTokenAsync(refreshToken);
             
             return Ok(new { message = "Token refreshed successfully." });
         }
 
+        [HttpGet("details")]
+        public async Task<IActionResult> Details()
+        {
+            var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
+            var user = await _accountService.GetUserDetails(refreshToken);
 
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            return Ok(user);
+        }
+
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
+            if (String.IsNullOrEmpty(refreshToken))
+            {
+                return BadRequest("Invalid request payload.");
+            }
+            await _accountService.Logout(refreshToken);
+            
+            return Ok(new { message = "User logged out successfully." });
+        }
     }
 }
 

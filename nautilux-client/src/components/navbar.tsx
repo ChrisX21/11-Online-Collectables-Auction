@@ -4,15 +4,11 @@ import React from "react";
 import ThemeSwitcher from "./theme-switcher";
 import { FaSearch, FaHeart } from "react-icons/fa";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
-  const isAuthenticated = false;
-  const user = {
-    userName: "John Doe",
-  };
-  const logout = () => {
-    console.log("logout");
-  };
+  const { isAuthenticated, user, logout } = useAuth();
+
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md">
       <div className="container mx-auto px-4 py-3">
@@ -61,7 +57,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white px-4 py-2 rounded-lg transition-colors">
-                  <span>{user?.userName}</span>
+                  <span>{user?.firstName}</span>
                 </button>
                 <button
                   onClick={logout}

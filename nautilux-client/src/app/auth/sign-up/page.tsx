@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import api from "@/utils/axios";
 
 export default function SignUp() {
   const router = useRouter();
@@ -30,7 +31,6 @@ export default function SignUp() {
     setIsLoading(true);
     setError("");
 
-    // Basic validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
@@ -38,30 +38,17 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-        }),
+      await api.post("/auth/register", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Registration failed");
-        return;
-      }
 
       // Successful registration
       router.push("/auth/sign-in");
-    } catch (error) {
-      setError("An unexpected error occurred");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }

@@ -1,12 +1,6 @@
 ﻿using Nautilux_Auctions.Application.Abstracts;
 using Nautilux_Auctions.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Microsoft.EntityFrameworkCore;
 namespace Nautilux_Auctions.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
@@ -23,5 +17,22 @@ namespace Nautilux_Auctions.Infrastructure.Repositories
             return await _applicationDbContext.Users
                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
+
+        public async Task<string?> GetUserRole(User user)
+        {
+            var userRole = await _applicationDbContext.UserRoles
+                .FirstOrDefaultAsync(ur => ur.UserId == user.Id);
+
+            if (userRole == null)
+            {
+                return null;
+            }
+
+            var role =  await _applicationDbContext.Roles
+                .FirstOrDefaultAsync(r => r.Id == userRole.RoleId);
+
+            return role.Name;
+        }
+
     }
 }

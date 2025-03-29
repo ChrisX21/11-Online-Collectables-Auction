@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import LoadingScreen from "@/components/loading-screen";
 import { Suspense } from "react";
+import { AuthProvider } from "@/context/AuthContext";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,9 +27,11 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${montserrat.className} antialiased`}
       >
+        <AuthProvider>
           <Navbar />
           <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
           <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

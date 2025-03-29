@@ -35,6 +35,7 @@ namespace Nautilux_Auctions.Handlers
                 LoginFailedException e => (HttpStatusCode.Unauthorized, exception.Message),
                 UserRegistrationFailedException e => (HttpStatusCode.BadRequest, exception.Message),
                 InvalidRefreshTokenException e => (HttpStatusCode.BadRequest, exception.Message),
+                UnauthorizedException e => (HttpStatusCode.Unauthorized, exception.Message),
                 _ => (HttpStatusCode.InternalServerError, $"An error occurred {exception.Message}")
             };
         }

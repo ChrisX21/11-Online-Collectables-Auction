@@ -4,9 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/axios";
 
 export default function SignIn() {
   const router = useRouter();
+  const { checkAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,27 +21,15 @@ export default function SignIn() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      await api.post("/auth/login", {
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Invalid credentials");
-        return;
-      }
-
+      await checkAuth(); // Update auth state after successful login
       router.push("/catalog");
-    } catch (error) {
-      setError("An unexpected error occurred");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Invalid credentials");
     } finally {
       setIsLoading(false);
     }

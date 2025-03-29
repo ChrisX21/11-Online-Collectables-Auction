@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Nautilux_Auctions.Application.Abstracts;
+using Nautilux_Auctions.Domain.DTO;
 using Nautilux_Auctions.Domain.Entities;
 using Nautilux_Auctions.Domain.Exceptions;
 using Nautilux_Auctions.Domain.Requests;
@@ -93,6 +94,59 @@ namespace Nautilux_Auctions.Application.Services
             _authProcessor.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", jwtToken, expirationDateInUtc);
             _authProcessor.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshTokenValue, refreshTokenExpirationDateInUtc);
         }
+        
+        public async Task<UserDetailsDto> GetUserDetails(string? refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new UnauthorizedException("Refresh token is required");
+            }
 
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+
+            if (user == null)
+            {
+                throw new UnauthorizedException("Unable to retrieve user for refresh token");
+            }
+
+            if (user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
+            {
+                throw new UnauthorizedException("Refresh token has expired");
+            }
+
+            var role = await _userRepository.GetUserRole(user);
+
+            var userDetails = new UserDetailsDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = role
+            };
+
+            return userDetails;
+        }
+
+        public async Task Logout(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new InvalidRefreshTokenException("Refresh token is required");
+            }
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+            if (user == null)
+            {
+                throw new InvalidRefreshTokenException("Unable to retrieve user for refresh token");
+            }
+
+            _authProcessor.RemoveAuthTokensFromHttpCookie();
+
+            user.RefreshToken = null;
+            user.RefreshTokenExpiresAtUtc = null;
+
+            await _userManager.UpdateAsync(user);
+            
+        }
     }
 }

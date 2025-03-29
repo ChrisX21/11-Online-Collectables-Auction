@@ -68,5 +68,11 @@ namespace Nautilux_Auctions.Infrastructure.Processors
                 SameSite = SameSiteMode.Strict
             });
         }
+
+        public void RemoveAuthTokensFromHttpCookie()
+        {
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("ACCESS_TOKEN");
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("REFRESH_TOKEN");
+        }
     }
 }

@@ -5,5 +5,6 @@ namespace Nautilux_Auctions.Application.Abstracts
     public interface IUserRepository
     {
         Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
+        Task<string?> GetUserRole(User user);
     }
 }
