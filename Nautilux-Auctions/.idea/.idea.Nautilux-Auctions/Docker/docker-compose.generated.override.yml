@@ -1,0 +1,20 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  nautilux-auctions:
+    build:
+      context: "/home/chrisx/Documents/Projects/Education/Final Year Project/11-Online-Collectables-Auction/Nautilux-Auctions"
+      dockerfile: "Nautilux-Auctions/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Nautilux-Auctions.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "nautiluxauctions:dev"
+    ports: []
+    volumes:
+    - "/home/chrisx/Documents/Projects/Education/Final Year Project/11-Online-Collectables-Auction/Nautilux-Auctions/Nautilux-Auctions:/app:rw"
+    - "/home/chrisx/Documents/Projects/Education/Final Year Project/11-Online-Collectables-Auction/Nautilux-Auctions:/src:rw"
+    - "/home/chrisx/.nuget/packages:/home/app/.nuget/packages"
+    working_dir: "/app"
