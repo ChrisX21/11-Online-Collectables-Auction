@@ -13,6 +13,7 @@ using System.Text;
 using Nautilux_Auctions.Handlers;
 using Nautilux_Auctions.Application.Services;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.OpenApi.Models;
 
 namespace Nautilux_Auctions
 {
@@ -29,7 +30,30 @@ namespace Nautilux_Auctions
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
@@ -62,6 +86,11 @@ namespace Nautilux_Auctions
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IAuthTokenProcessor, AuthTokenProcessor>();
+            builder.Services.AddScoped<IListingRepository, ListingRepository>();
+            builder.Services.AddScoped<IListingService, ListingService>();
+            builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddHttpContextAccessor();
 
