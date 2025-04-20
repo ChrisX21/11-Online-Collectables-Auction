@@ -37,11 +37,8 @@ namespace Nautilux_Auctions.Controllers
             }
 
             await _accountService.LoginAsync(loginRequest);
-            //development purposes only, remove in production
-            var accessToken = HttpContext.Request.Cookies["ACCESS_TOKEN"];
-            var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
             
-            return Ok(new { message = "User logged in successfully.", AccessToken = accessToken, RefreshToken = refreshToken });
+            return Ok(new { message = "User logged in successfully." });
         }
 
         [HttpPost("refresh")]

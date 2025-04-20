@@ -7,5 +7,7 @@ public interface IListingService
 {
     Task<Listing> CreateListingAsync(CreateListingDto listing);
     Task<IEnumerable<Listing>> GetAllListingsAsync();
+    Task<Listing> UpdateListingAsync(int id, CreateListingDto listing);
+    Task<Listing?> GetListingByIdAsync(int listingId);
     
 }

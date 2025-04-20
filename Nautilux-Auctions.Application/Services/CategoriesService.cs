@@ -26,7 +26,13 @@ public class CategoriesService : ICategoriesService
 
     public Task<Category> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var category = _unitOfWork.Categories.GetByIdAsync(id);
+        if (category is null)
+        {
+            throw new KeyNotFoundException($"Category with id {id} not found.");
+        }
+
+        return category;
     }
 
     public async Task<Category> CreateAsync(CategoriesDto category)

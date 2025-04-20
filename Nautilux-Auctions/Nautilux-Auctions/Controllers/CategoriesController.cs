@@ -17,7 +17,8 @@ public class CategoriesController : Controller
         _categoriesService = categoriesService;
     }
     
-    [HttpGet("all")]
+    [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetCategories()
     {
         var categories = await _categoriesService.GetAllAsync();
@@ -44,5 +45,25 @@ public class CategoriesController : Controller
             Description = createdCategory.Result.Description,
         };
         return CreatedAtAction(nameof(GetCategories), new { id = createdCategory.Id }, response);
+    }
+    
+    [HttpGet("{id}")]
+    [Authorize]
+    public IActionResult GetCategoryById(int id)
+    {
+        var category = _categoriesService.GetByIdAsync(id);
+        if (category == null)
+        {
+            return NotFound($"Category with id {id} not found.");
+        }
+
+        var response = new CategoriesDto
+        {
+            Id = category.Result.Id,
+            Name = category.Result.Name,
+            Description = category.Result.Description,
+        };
+        
+        return Ok(response);
     }
 }

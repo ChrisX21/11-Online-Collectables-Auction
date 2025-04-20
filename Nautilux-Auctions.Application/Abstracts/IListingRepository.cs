@@ -1,3 +1,4 @@
+using Nautilux_Auctions.Domain.DTO.ListingDtos;
 using Nautilux_Auctions.Domain.Entities;
 
 namespace Nautilux_Auctions.Application.Abstracts;

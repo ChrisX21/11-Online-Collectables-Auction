@@ -1,4 +1,5 @@
 using Nautilux_Auctions.Application.Abstracts;
+using Nautilux_Auctions.Domain.DTO.ListingDtos;
 using Nautilux_Auctions.Domain.Entities;
 
 namespace Nautilux_Auctions.Infrastructure.Repositories;
@@ -16,9 +17,10 @@ public class ListingRepository : IListingRepository
         return listing;
     }
 
-    public async Task<Listing> UpdateListingAsync(Listing listing)
+    public Task<Listing> UpdateListingAsync(Listing listing)
     {
-        throw new NotImplementedException();
+        _context.Listings.Update(listing);
+        return Task.FromResult(listing);
     }
 
     public async Task DeleteListingAsync(int listingId)
@@ -26,9 +28,9 @@ public class ListingRepository : IListingRepository
         throw new NotImplementedException();
     }
 
-    public Task<Listing?> GetListingByIdAsync(int listingId)
+    public async Task<Listing?> GetListingByIdAsync(int listingId)
     {
-        throw new NotImplementedException();
+        return await _context.Listings.FindAsync(listingId);
     }
 
     public Task<IEnumerable<Listing>> GetAllListingsAsync()

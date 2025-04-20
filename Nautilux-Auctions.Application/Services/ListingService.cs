@@ -63,5 +63,56 @@ public class ListingService : IListingService
             return createdListing;
         }
 
+        public async Task<Listing> UpdateListingAsync(int id, CreateListingDto listing)
+        {
+            var existingListing = await _unitOfWork.Listings.GetListingByIdAsync(id);
+            if (existingListing == null)
+            {
+                throw new KeyNotFoundException($"Listing with ID {id} not found.");
+            }
+            existingListing.Title = listing.Title;
+            existingListing.Description = listing.Description;
+            existingListing.StartingPrice = listing.StartingPrice;
+            existingListing.EndDate = listing.EndDate;
+            existingListing.StartDate = listing.StartDate;
+            existingListing.ReservePrice = listing.ReservePrice;
+            existingListing.SellerId = listing.SellerId;
+            existingListing.Images = listing.Images.Select(imageDto => new Image
+            {
+                Url = imageDto.Url,
+                IsPrimary = imageDto.IsPrimary,
+                Caption = imageDto.Caption,
+                DisplayOrder = imageDto.DisplayOrder,
+            }).ToList();
+            existingListing.CategoryId = listing.CategoryId;
+            existingListing.BuyNowPrice = listing.BuyNowPrice;
+            existingListing.IsFeatured = listing.IsFeatured;
+            existingListing.IsActive = listing.IsActive;
+            existingListing.Condition = listing.Condition;
+            existingListing.Origin = listing.Origin;
+            existingListing.Year = listing.Year;
+            existingListing.Dimensions = listing.Dimensions;
+            existingListing.Materials = listing.Materials;
+            existingListing.AuthenticityId = listing.AuthenticityId;
+            existingListing.ShippingOptions = listing.ShippingOptions;
+            existingListing.Status = listing.Status;
+            
+            var updatedListing = await _unitOfWork.Listings.UpdateListingAsync(existingListing);
+            if (updatedListing == null)
+            {
+                throw new Exception("Failed to update listing.");
+            }
+            await _unitOfWork.SaveChangesAsync();
+            return updatedListing;
+        }
         
+        public async Task<Listing?> GetListingByIdAsync(int id)
+        {
+            var listing = await _unitOfWork.Listings.GetListingByIdAsync(id);
+            if (listing == null)
+            {
+                throw new KeyNotFoundException($"Listing with ID {id} not found.");
+            }
+            return listing;
+        }
 }
