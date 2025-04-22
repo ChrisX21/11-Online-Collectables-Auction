@@ -18,7 +18,7 @@ public class ListingsController : Controller
         _listingService = listingService;
     }
     
-    [HttpGet]
+    [HttpGet("active")]
     [Authorize]
     public async Task<IActionResult> GetListings()
     {
@@ -27,6 +27,19 @@ public class ListingsController : Controller
         {
             return NotFound("No listings found.");
         }
+        return Ok(listings);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetActiveListings()
+    {
+        var listings = await _listingService.GetActiveListingsAsync();
+        if (listings == null || !listings.Any())
+        {
+            return NotFound("No listings found.");
+        }
+
         return Ok(listings);
     }
     
@@ -56,7 +69,18 @@ public class ListingsController : Controller
             EndDate = createdListing.EndDate,
             StartDate = createdListing.StartDate,
             ReservePrice = createdListing.ReservePrice,
-            SellerId = createdListing.SellerId,
+            BuyNowPrice = createdListing.BuyNowPrice,
+            Origin = createdListing.Origin,
+            Year = createdListing.Year,
+            Dimensions = createdListing.Dimensions,
+            Materials = createdListing.Materials,
+            AuthenticityId = createdListing.AuthenticityId,
+            ShippingOptions = createdListing.ShippingOptions,
+            CategoryId = createdListing.CategoryId,
+            Condition = createdListing.Condition,
+            IsFeatured = createdListing.IsFeatured,
+            IsActive = createdListing.IsActive,
+            Status = createdListing.Status,
             Images = createdListing.Images.Select(image => new ImageResponseDto()
             {
                 Url = image.Url,
@@ -64,6 +88,7 @@ public class ListingsController : Controller
                 Caption = image.Caption,
                 DisplayOrder = image.DisplayOrder,
             }).ToList(),
+            SellerId = createdListing.SellerId,
         };
         return CreatedAtAction(nameof(GetListings), new { id = createdListing.Id }, response);
     }
@@ -91,33 +116,33 @@ public class ListingsController : Controller
         
         var response = new ListingResponseDto
         {
-            ListingId = updatedListing.Id,
-            Title = updatedListing.Title,
-            Description = updatedListing.Description,
-            StartingPrice = updatedListing.StartingPrice,
-            EndDate = updatedListing.EndDate,
-            StartDate = updatedListing.StartDate,
-            ReservePrice = updatedListing.ReservePrice,
-            SellerId = updatedListing.SellerId,
-            Images = updatedListing.Images.Select(image => new ImageResponseDto()
+            ListingId = listing.ListingId,
+            Title = listing.Title,
+            Description = listing.Description,
+            StartingPrice = listing.StartingPrice,
+            EndDate = listing.EndDate,
+            StartDate = listing.StartDate,
+            ReservePrice = listing.ReservePrice,
+            BuyNowPrice = listing.BuyNowPrice,
+            Origin = listing.Origin,
+            Year = listing.Year,
+            Dimensions = listing.Dimensions,
+            Materials = listing.Materials,
+            AuthenticityId = listing.AuthenticityId,
+            ShippingOptions = listing.ShippingOptions,
+            CategoryId = listing.CategoryId,
+            Condition = listing.Condition,
+            IsFeatured = listing.IsFeatured,
+            IsActive = listing.IsActive,
+            Status = listing.Status,
+            Images = listing.Images.Select(image => new ImageResponseDto()
             {
                 Url = image.Url,
                 IsPrimary = image.IsPrimary,
                 Caption = image.Caption,
                 DisplayOrder = image.DisplayOrder,
             }).ToList(),
-            Status = updatedListing.Status,
-            CategoryId = updatedListing.CategoryId,
-            BuyNowPrice = updatedListing.BuyNowPrice,
-            IsFeatured = updatedListing.IsFeatured,
-            IsActive = updatedListing.IsActive,
-            Condition = updatedListing.Condition,
-            Origin = updatedListing.Origin,
-            Year = updatedListing.Year,
-            Dimensions = updatedListing.Dimensions,
-            Materials = updatedListing.Materials,
-            AuthenticityId = updatedListing.AuthenticityId,
-            ShippingOptions = updatedListing.ShippingOptions,
+            SellerId = listing.SellerId,
         };
         
         return Ok(response);

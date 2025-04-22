@@ -2,6 +2,7 @@
 using Nautilux_Auctions.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Nautilux_Auctions.Domain.Enums;
 
 namespace Nautilux_Auctions.Infrastructure
 {
@@ -34,8 +35,10 @@ namespace Nautilux_Auctions.Infrastructure
 
             builder.Entity<User>().Property(u => u.FirstName).HasMaxLength(256);
             builder.Entity<User>().Property(u => u.LastName).HasMaxLength(256);
+            builder.Entity<User>().Property(u => u.Email).HasMaxLength(256);
+            builder.Entity<User>().Property(u => u.PhoneNumber).HasMaxLength(15);
             
-            // User relationships
+            //User
             builder.Entity<User>()
                 .HasMany(u => u.ReviewsReceived)
                 .WithOne(r => r.Seller)
@@ -90,7 +93,7 @@ namespace Nautilux_Auctions.Infrastructure
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
             
-            // Bid relationships
+            //Bid
             builder.Entity<Bid>()
                 .HasOne(b => b.Bidder)
                 .WithMany(u => u.Bids)
@@ -103,12 +106,20 @@ namespace Nautilux_Auctions.Infrastructure
                 .HasForeignKey(b => b.ListingId)
                 .OnDelete(DeleteBehavior.NoAction);
                 
-            // Listing relationships
+            //Listing
             builder.Entity<Listing>()
                 .HasOne(l => l.AuctionHistory)
                 .WithOne(h => h.Listing)
                 .HasForeignKey<AuctionHistory>(h => h.ListingId)
                 .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Entity<Listing>()
+                .Property(l => l.Status)
+                .HasDefaultValue(ListingStatus.Active);
+
+            builder.Entity<Listing>()
+                .Property(l => l.ShippingOptions)
+                .HasDefaultValue(ShippingOption.None);
 
             builder.Entity<Listing>()
                 .HasOne(l => l.Payment)
@@ -152,50 +163,54 @@ namespace Nautilux_Auctions.Infrastructure
                 .HasForeignKey(w => w.ListingId)
                 .OnDelete(DeleteBehavior.NoAction);
                 
-            // Payment relationship
+            //Payment
             builder.Entity<Payment>()
                 .HasOne(p => p.ShippingDetail)
                 .WithOne(s => s.Payment)
                 .HasForeignKey<ShippingDetail>(s => s.PaymentId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Payment>()
+                .Property(p => p.Status)
+                .HasDefaultValue(PaymentStatus.Pending);
                 
-            // ShippingDetail relationship
+            //ShippingDetail
             builder.Entity<ShippingDetail>()
                 .HasOne(s => s.Address)
                 .WithMany(a => a.ShippingDetails)
                 .HasForeignKey(s => s.AddressId)
                 .OnDelete(DeleteBehavior.NoAction);
                 
-            // Category relationship
+            //Category
             builder.Entity<Category>()
                 .HasOne(c => c.ParentCategory)
                 .WithMany(c => c.Subcategories)
                 .HasForeignKey(c => c.ParentCategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
             
-            // Message relationship
+            //Message
             builder.Entity<Message>()
                 .HasOne(m => m.Listing)
                 .WithMany()
                 .HasForeignKey(m => m.ListingId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure indexes for better performance
+            //indexes
             builder.Entity<Listing>().HasIndex(l => l.SellerId);
             builder.Entity<Listing>().HasIndex(l => l.CategoryId);
             builder.Entity<Listing>().HasIndex(l => l.EndDate);
-            builder.Entity<Listing>().HasIndex(l => l.Status);
+            // builder.Entity<Listing>().HasIndex(l => l.Status);
 
             builder.Entity<Bid>().HasIndex(b => b.ListingId);
             builder.Entity<Bid>().HasIndex(b => b.BidderId);
             builder.Entity<Bid>().HasIndex(b => b.Timestamp);
 
             builder.Entity<Payment>().HasIndex(p => p.UserId);
-            builder.Entity<Payment>().HasIndex(p => p.Status);
+            // builder.Entity<Payment>().HasIndex(p => p.Status);
 
             builder.Entity<WatchListItem>().HasIndex(w => new { w.UserId, w.ListingId }).IsUnique();
 
-            // Configure decimal precision
+            //decimal precision
             builder.Entity<Listing>().Property(l => l.StartingPrice).HasPrecision(18, 2);
             builder.Entity<Listing>().Property(l => l.ReservePrice).HasPrecision(18, 2);
             builder.Entity<Listing>().Property(l => l.BuyNowPrice).HasPrecision(18, 2);

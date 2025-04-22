@@ -6,7 +6,8 @@ namespace Nautilux_Auctions.Application.Abstracts;
 public interface IListingService
 {
     Task<Listing> CreateListingAsync(CreateListingDto listing);
-    Task<IEnumerable<Listing>> GetAllListingsAsync();
+    Task<IEnumerable<ListingsDto>> GetAllListingsAsync();
+    Task<IEnumerable<ListingsDto>> GetActiveListingsAsync();
     Task<Listing> UpdateListingAsync(int id, CreateListingDto listing);
     Task<Listing?> GetListingByIdAsync(int listingId);
     

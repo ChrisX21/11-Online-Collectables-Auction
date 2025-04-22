@@ -14,6 +14,7 @@ using Nautilux_Auctions.Handlers;
 using Nautilux_Auctions.Application.Services;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.OpenApi.Models;
+using Nautilux_Auctions.Infrastructure.DataSeeding;
 
 namespace Nautilux_Auctions
 {
@@ -137,6 +138,27 @@ namespace Nautilux_Auctions
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+            
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    var userManager = services.GetRequiredService<UserManager<User>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+
+                    logger.LogInformation("Starting database seeding...");
+                    DbInitializer.SeedDatabaseAsync(context, userManager, roleManager).Wait();
+                    logger.LogInformation("Database seeding completed successfully.");
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
             }
 
             app.UseExceptionHandler(_ => { });

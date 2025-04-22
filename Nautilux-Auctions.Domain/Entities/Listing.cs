@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Nautilux_Auctions.Domain.Enums;
 
 namespace Nautilux_Auctions.Domain.Entities;
 
@@ -16,16 +17,16 @@ public class Listing
     public decimal? BuyNowPrice { get; set; }
     public bool IsFeatured { get; set; }
     public bool IsActive { get; set; }
-    public string? Condition { get; set; }
+    public ListingCondition Condition { get; set; }
     public string? Origin { get; set; }
     public int? Year { get; set; }
     public string? Dimensions { get; set; }
     public string? Materials { get; set; }
     public int? AuthenticityId { get; set; }
-    public string? ShippingOptions { get; set; }
-    public int ViewCount { get; set; }
-    public string Status { get; set; } = "Draft"; // Draft, Active, Ended, Sold, Cancelled
-
+    public ShippingOption ShippingOptions { get; set; }
+    public ListingStatus Status { get; set; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } 
     // Navigation properties
     [ForeignKey("SellerId")]
     public virtual User Seller { get; set; } = null!;

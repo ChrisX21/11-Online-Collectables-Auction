@@ -1,4 +1,5 @@
 using Nautilux_Auctions.Application.Abstracts;
+using Nautilux_Auctions.Domain.DTO.ImageDtos;
 using Nautilux_Auctions.Domain.DTO.ListingDtos;
 using Nautilux_Auctions.Domain.Entities;
 
@@ -12,14 +13,58 @@ public class ListingService : IListingService
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<Listing>> GetAllListingsAsync()
+        public async Task<IEnumerable<ListingsDto>> GetAllListingsAsync()
         {
             var allListings = await _unitOfWork.Listings.GetAllListingsAsync();
             if (allListings == null || !allListings.Any())
             {
                 throw new KeyNotFoundException("No listings found.");
             }
-            return allListings;
+    
+            return allListings.Select(listing => new ListingsDto
+            {
+                Id = listing.Id,
+                Title = listing.Title,
+                Description = listing.Description,
+                StartingPrice = listing.StartingPrice,
+                CurrentBid = listing.Bids?.OrderByDescending(b => b.Amount).FirstOrDefault(),
+                EndDate = listing.EndDate,
+                Status = listing.Status,
+                Image = listing.Images.Select(imageDto => new Image
+                {
+                    Url = imageDto.Url,
+                    IsPrimary = imageDto.IsPrimary,
+                    Caption = imageDto.Caption,
+                    DisplayOrder = imageDto.DisplayOrder,
+                }).FirstOrDefault(),
+            });
+        }
+
+        public async Task<IEnumerable<ListingsDto>> GetActiveListingsAsync()
+        {
+            var activeListings = await _unitOfWork.Listings.GetActiveListingsAsync();
+            if (activeListings == null || !activeListings.Any())
+            {
+                throw new KeyNotFoundException("No listings found.");
+            }
+
+            return activeListings.Select(listing => new ListingsDto
+            {
+                Id = listing.Id,
+                Title = listing.Title,
+                Description = listing.Description,
+                StartingPrice = listing.StartingPrice,
+                CurrentBid = listing.Bids?.OrderByDescending(b => b.Amount).FirstOrDefault(),
+                EndDate = listing.EndDate,
+                Status = listing.Status,
+                Image = listing.Images.Select(imageDto => new Image
+                {
+                    Url = imageDto.Url,
+                    IsPrimary = imageDto.IsPrimary,
+                    Caption = imageDto.Caption,
+                    DisplayOrder = imageDto.DisplayOrder,
+                }).FirstOrDefault(),
+            });
         }
         public async Task<Listing> CreateListingAsync(CreateListingDto listing)
         {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Nautilux_Auctions.Domain.Enums;
 
 namespace Nautilux_Auctions.Domain.Entities;
 
@@ -10,7 +11,7 @@ public class Payment
     public decimal Amount { get; set; }
     public DateTime Timestamp { get; set; }
     public string PaymentMethod { get; set; } = "Credit Card"; // Credit Card, PayPal, Bank Transfer
-    public string Status { get; set; } = "Pending"; // Pending, Completed, Failed, Refunded
+    public PaymentStatus Status { get; set; }
     public string? TransactionId { get; set; }
 
     // Navigation properties

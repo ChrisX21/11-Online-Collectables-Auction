@@ -8,8 +8,9 @@ namespace Nautilux_Auctions.Domain.Entities
         public required string LastName { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
-        
-        // Navigation properties
+        public DateTime CreatedAtUtc { get; set; } 
+        public string? AvatarUrl { get; set; }
+        //Navigation properties
         public virtual ICollection<Listing> Listings { get; set; } = new List<Listing>();
         public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
         public virtual ICollection<Review> ReviewsGiven { get; set; } = new List<Review>();
@@ -28,7 +29,8 @@ namespace Nautilux_Auctions.Domain.Entities
                 Email = email,
                 UserName = email,
                 FirstName = firstName,
-                LastName = lastName
+                LastName = lastName,
+                CreatedAtUtc = DateTime.UtcNow,
             };
         }
 

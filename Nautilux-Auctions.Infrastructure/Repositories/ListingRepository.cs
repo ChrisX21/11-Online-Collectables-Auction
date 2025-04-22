@@ -1,6 +1,8 @@
+using System.Data.Entity;
 using Nautilux_Auctions.Application.Abstracts;
 using Nautilux_Auctions.Domain.DTO.ListingDtos;
 using Nautilux_Auctions.Domain.Entities;
+using Nautilux_Auctions.Domain.Enums;
 
 namespace Nautilux_Auctions.Infrastructure.Repositories;
 
@@ -43,9 +45,12 @@ public class ListingRepository : IListingRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Listing>> GetActiveListingsAsync()
+    public async Task<IEnumerable<Listing>> GetActiveListingsAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Listings 
+            .Where(l => l.Status == ListingStatus.Active)
+            .ToListAsync();
+        
     }
 
     public Task<IEnumerable<Listing>> GetClosedListingsAsync()
