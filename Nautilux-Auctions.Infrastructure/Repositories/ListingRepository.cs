@@ -1,6 +1,5 @@
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Nautilux_Auctions.Application.Abstracts;
-using Nautilux_Auctions.Domain.DTO.ListingDtos;
 using Nautilux_Auctions.Domain.Entities;
 using Nautilux_Auctions.Domain.Enums;
 
@@ -25,24 +24,34 @@ public class ListingRepository : IListingRepository
         return Task.FromResult(listing);
     }
 
-    public async Task DeleteListingAsync(int listingId)
+    public Task DeleteListingAsync(Listing listing)
     {
-        throw new NotImplementedException();
+        _context.Listings.Remove(listing);
+        return Task.CompletedTask;
     }
 
     public async Task<Listing?> GetListingByIdAsync(int listingId)
     {
-        return await _context.Listings.FindAsync(listingId);
+        return await _context.Listings.
+            Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
+            .FirstOrDefaultAsync(l => l.Id == listingId);
     }
 
-    public Task<IEnumerable<Listing>> GetAllListingsAsync()
+    public async Task<IEnumerable<Listing>> GetAllListingsAsync()
     {
-        return Task.FromResult(_context.Listings.AsEnumerable());
+        return await _context.Listings
+            .Select(l => l)
+            .ToListAsync();
     }
 
-    public Task<IEnumerable<Listing>> GetListingByUserIdAsync(string userId)
+    public async Task<IEnumerable<Listing>> GetListingByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        return await _context.Listings
+            .Select(l => l)
+            .Where(l => l.SellerId == userId)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Listing>> GetActiveListingsAsync()

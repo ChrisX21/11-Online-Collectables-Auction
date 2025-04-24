@@ -16,14 +16,17 @@ public class ListingResponseDto
     public bool IsFeatured { get; set; }
     public bool IsActive { get; set; }
     public ListingCondition Condition { get; set; }
+    public string StringCondition { get; set; }
     public string? Origin { get; set; }
     public int? Year { get; set; }
     public string? Dimensions { get; set; }
     public string? Materials { get; set; }
     public int? AuthenticityId { get; set; }
     public ShippingOption ShippingOptions { get; set; }
+    public string StringShippingOptions { get; set; }
     public int CategoryId { get; set; }
     public Guid SellerId { get; set; }
     public ListingStatus Status { get; set; }
+    public string StringStatus { get; set; }
     public ICollection<ImageResponseDto> Images { get; set; } = new List<ImageResponseDto>();
 }

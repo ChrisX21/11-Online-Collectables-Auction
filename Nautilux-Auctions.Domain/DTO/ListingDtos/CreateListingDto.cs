@@ -1,5 +1,4 @@
 using Nautilux_Auctions.Domain.DTO.ImageDtos;
-using Nautilux_Auctions.Domain.Entities;
 using Nautilux_Auctions.Domain.Enums;
 
 namespace Nautilux_Auctions.Domain.DTO.ListingDtos;
@@ -26,5 +25,6 @@ public class CreateListingDto
     public int CategoryId { get; set; }
     public Guid SellerId { get; set; }
     public ListingStatus Status { get; set; }
+    public string StringStatus { get; set; }
     public ICollection<ImageDto> Images { get; set; } = new List<ImageDto>();
 }

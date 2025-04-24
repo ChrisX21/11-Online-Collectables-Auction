@@ -12,45 +12,76 @@ public class CategoriesService : ICategoriesService
     {
         _unitOfWork = unitOfWork;
     }
-    
-    public async Task<IEnumerable<Category>> GetAllAsync()
+
+    public async Task<IEnumerable<CategoriesDto>> GetAllAsync()
     {
         var allCategories = await _unitOfWork.Categories.GetAllAsync();
         if(allCategories is null || !allCategories.Any())
         {
             throw new KeyNotFoundException("No categories found.");
         }
-        
-        return allCategories;
+
+        var rootCategories = allCategories
+            .Where(c => c.ParentCategoryId == null)
+            .ToList();
+
+        return rootCategories.Select(c => MapCategoryToDto(c, allCategories));
     }
 
-    public Task<Category> GetByIdAsync(int id)
+    public async Task<CategoriesDto> GetByIdAsync(int id)
     {
-        var category = _unitOfWork.Categories.GetByIdAsync(id);
+        var allCategories = await _unitOfWork.Categories.GetAllAsync();
+        if (!allCategories.Any())
+        {
+            throw new KeyNotFoundException("No categories found.");
+        }
+
+        var category = allCategories.FirstOrDefault(c => c.Id == id);
         if (category is null)
         {
             throw new KeyNotFoundException($"Category with id {id} not found.");
         }
 
-        return category;
+        return MapCategoryToDto(category, allCategories);
     }
 
-    public async Task<Category> CreateAsync(CategoriesDto category)
+    public async Task<CategoriesDto> CreateAsync(CategoriesDto categoryDto)
     {
-        if (category is null)
+        if (categoryDto is null)
         {
-            throw new ArgumentNullException(nameof(category), "Category cannot be null.");
+            throw new ArgumentNullException(nameof(categoryDto), "Category cannot be null.");
         }
 
         var newCategory = new Category()
         {
-            Name = category.Name,
-            Description = category.Description,
+            Name = categoryDto.Name,
+            Description = categoryDto.Description,
+            ParentCategoryId = categoryDto.ParentCategoryId
         };
-        
+
         var createdCategory = await _unitOfWork.Categories.CreateAsync(newCategory);
         await _unitOfWork.SaveChangesAsync();
-        
-        return createdCategory;
+
+        var allCategories = await _unitOfWork.Categories.GetAllAsync();
+        return MapCategoryToDto(createdCategory, allCategories);
+    }
+
+    private CategoriesDto MapCategoryToDto(Category category, IEnumerable<Category> allCategories)
+    {
+        var dto = new CategoriesDto
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Description = category.Description,
+            ParentCategoryId = category.ParentCategoryId
+        };
+
+        var subcategories = allCategories.Where(c => c.ParentCategoryId == category.Id);
+        foreach (var sub in subcategories)
+        {
+            dto.SubCategories.Add(MapCategoryToDto(sub, allCategories));
+        }
+
+        return dto;
     }
 }

@@ -115,7 +115,7 @@ namespace Nautilux_Auctions.Infrastructure
             
             builder.Entity<Listing>()
                 .Property(l => l.Status)
-                .HasDefaultValue(ListingStatus.Active);
+                .HasDefaultValue(ListingStatus.Draft);
 
             builder.Entity<Listing>()
                 .Property(l => l.ShippingOptions)
@@ -199,14 +199,14 @@ namespace Nautilux_Auctions.Infrastructure
             builder.Entity<Listing>().HasIndex(l => l.SellerId);
             builder.Entity<Listing>().HasIndex(l => l.CategoryId);
             builder.Entity<Listing>().HasIndex(l => l.EndDate);
-            // builder.Entity<Listing>().HasIndex(l => l.Status);
+            builder.Entity<Listing>().HasIndex(l => l.Status);
 
             builder.Entity<Bid>().HasIndex(b => b.ListingId);
             builder.Entity<Bid>().HasIndex(b => b.BidderId);
             builder.Entity<Bid>().HasIndex(b => b.Timestamp);
 
             builder.Entity<Payment>().HasIndex(p => p.UserId);
-            // builder.Entity<Payment>().HasIndex(p => p.Status);
+            builder.Entity<Payment>().HasIndex(p => p.Status);
 
             builder.Entity<WatchListItem>().HasIndex(w => new { w.UserId, w.ListingId }).IsUnique();
 

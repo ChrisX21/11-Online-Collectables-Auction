@@ -9,6 +9,7 @@ public interface IListingService
     Task<IEnumerable<ListingsDto>> GetAllListingsAsync();
     Task<IEnumerable<ListingsDto>> GetActiveListingsAsync();
     Task<Listing> UpdateListingAsync(int id, CreateListingDto listing);
-    Task<Listing?> GetListingByIdAsync(int listingId);
+    Task<ListingResponseDto?> GetListingByIdAsync(int listingId);
+    Task RemoveListingAsync(int listingId);
     
 }

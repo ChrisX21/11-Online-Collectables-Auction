@@ -20,7 +20,7 @@ public class ListingService : IListingService
             {
                 throw new KeyNotFoundException("No listings found.");
             }
-    
+
             return allListings.Select(listing => new ListingsDto
             {
                 Id = listing.Id,
@@ -30,6 +30,7 @@ public class ListingService : IListingService
                 CurrentBid = listing.Bids?.OrderByDescending(b => b.Amount).FirstOrDefault(),
                 EndDate = listing.EndDate,
                 Status = listing.Status,
+                StringStatus = listing.Status.ToString(),
                 Image = listing.Images.Select(imageDto => new Image
                 {
                     Url = imageDto.Url,
@@ -57,6 +58,7 @@ public class ListingService : IListingService
                 CurrentBid = listing.Bids?.OrderByDescending(b => b.Amount).FirstOrDefault(),
                 EndDate = listing.EndDate,
                 Status = listing.Status,
+                StringStatus = listing.Status.ToString(),
                 Image = listing.Images.Select(imageDto => new Image
                 {
                     Url = imageDto.Url,
@@ -151,13 +153,58 @@ public class ListingService : IListingService
             return updatedListing;
         }
         
-        public async Task<Listing?> GetListingByIdAsync(int id)
+        public async Task<ListingResponseDto?> GetListingByIdAsync(int id)
         {
             var listing = await _unitOfWork.Listings.GetListingByIdAsync(id);
             if (listing == null)
             {
                 throw new KeyNotFoundException($"Listing with ID {id} not found.");
             }
-            return listing;
+            
+            var response = new ListingResponseDto
+            {
+                ListingId = listing.Id,
+                Title = listing.Title,
+                Description = listing.Description,
+                StartingPrice = listing.StartingPrice,
+                BuyNowPrice = listing.BuyNowPrice,
+                IsFeatured = listing.IsFeatured,
+                IsActive = listing.IsActive,
+                StringCondition = listing.Condition.ToString(),
+                Origin = listing.Origin,
+                Year = listing.Year,
+                Dimensions = listing.Dimensions,
+                Materials = listing.Materials,
+                AuthenticityId = listing.AuthenticityId,
+                ShippingOptions = listing.ShippingOptions,
+                StringShippingOptions = listing.ShippingOptions.ToString(),
+                Condition = listing.Condition,
+                CategoryId = listing.CategoryId,
+                EndDate = listing.EndDate,
+                StartDate = listing.StartDate,
+                ReservePrice = listing.ReservePrice,
+                SellerId = listing.SellerId,
+                StringStatus = listing.Status.ToString(),
+                Images = listing.Images.Select(image => new ImageResponseDto()
+                {
+                    Id = image.Id,
+                    Url = image.Url,
+                    IsPrimary = image.IsPrimary,
+                    Caption = image.Caption,
+                    DisplayOrder = image.DisplayOrder,
+                }).ToList(),
+            };
+            
+            return response;
+        }
+
+        public async Task RemoveListingAsync(int listingId)
+        {
+            var listingToRemove = await _unitOfWork.Listings.GetListingByIdAsync(listingId);
+            if (listingToRemove == null)
+            {
+                throw new KeyNotFoundException($"Listing with ID {listingId} not found.");
+            }
+            await _unitOfWork.Listings.DeleteListingAsync(listingToRemove);
         }
 }

@@ -13,4 +13,5 @@ public class ListingsDto
     public Bid? CurrentBid { get; set; }
     public DateTime EndDate { get; set; }
     public ListingStatus Status { get; set; }
+    public string StringStatus { get; set; }
 }

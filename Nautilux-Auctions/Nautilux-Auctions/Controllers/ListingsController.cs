@@ -17,8 +17,7 @@ public class ListingsController : Controller
     {
         _listingService = listingService;
     }
-    
-    [HttpGet("active")]
+    [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetListings()
     {
@@ -30,7 +29,7 @@ public class ListingsController : Controller
         return Ok(listings);
     }
 
-    [HttpGet]
+    [HttpGet("active")]
     [Authorize]
     public async Task<IActionResult> GetActiveListings()
     {
@@ -81,6 +80,7 @@ public class ListingsController : Controller
             IsFeatured = createdListing.IsFeatured,
             IsActive = createdListing.IsActive,
             Status = createdListing.Status,
+            StringStatus = createdListing.Status.ToString(),
             Images = createdListing.Images.Select(image => new ImageResponseDto()
             {
                 Url = image.Url,
@@ -135,6 +135,7 @@ public class ListingsController : Controller
             IsFeatured = listing.IsFeatured,
             IsActive = listing.IsActive,
             Status = listing.Status,
+            StringStatus = listing.Status.ToString(),
             Images = listing.Images.Select(image => new ImageResponseDto()
             {
                 Url = image.Url,
@@ -157,26 +158,21 @@ public class ListingsController : Controller
         {
             return NotFound($"Listing with id {id} not found.");
         }
-        
-        var response = new ListingResponseDto
+        return Ok(listing);
+    }
+    
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteListing(int id)
+    {
+        try
         {
-            ListingId = listing.Id,
-            Title = listing.Title,
-            Description = listing.Description,
-            StartingPrice = listing.StartingPrice,
-            EndDate = listing.EndDate,
-            StartDate = listing.StartDate,
-            ReservePrice = listing.ReservePrice,
-            SellerId = listing.SellerId,
-            Images = listing.Images.Select(image => new ImageResponseDto()
-            {
-                Url = image.Url,
-                IsPrimary = image.IsPrimary,
-                Caption = image.Caption,
-                DisplayOrder = image.DisplayOrder,
-            }).ToList(),
-        };
-        
-        return Ok(response);
+            await _listingService.RemoveListingAsync(id);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return NoContent();
     }
 }

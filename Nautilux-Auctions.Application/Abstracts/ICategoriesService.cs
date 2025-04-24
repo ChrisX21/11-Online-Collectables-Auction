@@ -5,7 +5,7 @@ namespace Nautilux_Auctions.Application.Abstracts;
 
 public interface ICategoriesService
 {
-    public Task<IEnumerable<Category>> GetAllAsync();
-    public Task<Category> GetByIdAsync(int id);
-    public Task<Category> CreateAsync(CategoriesDto category);
+    public Task<IEnumerable<CategoriesDto>> GetAllAsync();
+    public Task<CategoriesDto> GetByIdAsync(int id);
+    public Task<CategoriesDto> CreateAsync(CategoriesDto category);
 }
