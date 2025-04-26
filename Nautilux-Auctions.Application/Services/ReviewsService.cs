@@ -47,8 +47,11 @@ public class ReviewsService : IReviewsService
 
     public async Task<ReviewDto?> GetReviewById(int reviewId)
     {
+        if (reviewId <= 0)
+        {
+            throw new ArgumentException("Invalid review ID");
+        }
         var review =  await _unitOfWork.Reviews.GetReviewById(reviewId);
-        
         return new ReviewDto
         {
             Id = review.Id,
@@ -81,7 +84,11 @@ public class ReviewsService : IReviewsService
     }
 
     public async Task<List<ReviewDto>> GetReviewsByUserId(Guid userId)
-    {   
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new ArgumentException("Invalid user ID");
+        }
         var reviews = await _unitOfWork.Reviews.GetReviewsByUserId(userId);
         var reviewDtos = reviews.Select(r => new ReviewDto
         {
@@ -100,6 +107,10 @@ public class ReviewsService : IReviewsService
 
     public async Task<List<ReviewDto>> GetReviewsByListingId(int listingId)
     {
+        if (listingId <= 0)
+        {
+            throw new ArgumentException("Invalid listing ID");
+        }
         var reviews = await _unitOfWork.Reviews.GetReviewsByListingId(listingId);
         var reviewDtos = reviews.Select(r => new ReviewDto
         {
@@ -118,6 +129,10 @@ public class ReviewsService : IReviewsService
 
     public async Task<List<ReviewDto>> GetReviewsBySellerId(Guid sellerId)
     {
+        if (sellerId == Guid.Empty)
+        {
+            throw new ArgumentException("Invalid seller ID");
+        }
         var reviews = await _unitOfWork.Reviews.GetReviewsBySellerId(sellerId);
         var reviewDtos = reviews.Select(r => new ReviewDto
         {
@@ -136,6 +151,10 @@ public class ReviewsService : IReviewsService
 
     public async Task<List<ReviewDto>> GetReviewsByRating(int rating)
     {   
+        if (rating < 1 || rating > 5)
+        {
+            throw new ArgumentException("Invalid rating value");
+        }
         var reviews = await _unitOfWork.Reviews.GetReviewsByRating(rating);
         var reviewDtos = reviews.Select(r => new ReviewDto
         {
@@ -154,6 +173,15 @@ public class ReviewsService : IReviewsService
 
     public async Task<List<ReviewDto>> GetReviewsByRatingForListingId(int listingId, int rating)
     {
+        if (listingId <= 0)
+        {
+            throw new ArgumentException("Invalid listing ID");
+        }
+        if (rating < 1 || rating > 5)
+        {
+            throw new ArgumentException("Invalid rating value");
+        }
+        
         var reviews = await _unitOfWork.Reviews.GetReviewsByRatingForListingId(listingId, rating);
         var reviewDtos = reviews.Select(r => new ReviewDto
         {
@@ -172,6 +200,10 @@ public class ReviewsService : IReviewsService
 
     public async Task RemoveReview(int reviewId)
     {
+        if (reviewId <= 0)
+        {
+            throw new ArgumentException("Invalid review ID");
+        }
         var review = await _unitOfWork.Reviews.GetReviewById(reviewId);
         if (review == null)
         {

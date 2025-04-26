@@ -14,12 +14,14 @@ public class UnitOfWork : IUnitOfWork
         Categories = new CategoriesRepository(_context);
         Bids = new BidsRepository(_context);
         Reviews = new ReviewsRepository(_context);
+        Questions = new QuestionsRepository(_context);
     }
 
     public IListingRepository Listings { get; }
     public ICategoriesRepository Categories { get; }
     public IBidsRepository Bids { get; }
     public IReviewsRepository Reviews { get; } 
+    public IQuestionsRepository Questions { get; }
 
     public async Task<int> SaveChangesAsync()
     {
