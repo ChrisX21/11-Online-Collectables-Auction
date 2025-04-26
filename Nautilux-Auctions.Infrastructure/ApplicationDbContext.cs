@@ -16,7 +16,7 @@ namespace Nautilux_Auctions.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Listing> Listings { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Bid> Bids { get; set; }
+        public DbSet<Bid?> Bids { get; set; }
         public DbSet<Authenticity> Authenticities { get; set; }
         public DbSet<AuctionHistory> AuctionHistories { get; set; }
         public DbSet<Payment> Payments { get; set; }

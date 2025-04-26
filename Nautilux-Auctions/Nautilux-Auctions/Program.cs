@@ -12,8 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Nautilux_Auctions.Handlers;
 using Nautilux_Auctions.Application.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.OpenApi.Models;
+using Nautilux_Auctions.Hubs;
 using Nautilux_Auctions.Infrastructure.DataSeeding;
 
 namespace Nautilux_Auctions
@@ -77,12 +77,14 @@ namespace Nautilux_Auctions
             {
                 options.AddPolicy(name: corsPolicy, policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000")
+                    policy
+                        .WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
                 });
             });
+
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
@@ -91,12 +93,16 @@ namespace Nautilux_Auctions
             builder.Services.AddScoped<IListingService, ListingService>();
             builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
             builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+            builder.Services.AddScoped<IBidsRepository, BidsRepository>();
+            builder.Services.AddScoped<IBidsService, BidsService>();
+            builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
+            builder.Services.AddScoped<IReviewsService, ReviewsService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddHttpContextAccessor();
-
+            builder.Services.AddSignalR();
             builder.Services.AddExceptionHandler <GlobalExceptionHandler>();
-
+        
 
             builder.Services.AddAuthentication(options =>
             {
@@ -164,12 +170,12 @@ namespace Nautilux_Auctions
             app.UseExceptionHandler(_ => { });
 
             app.UseHttpsRedirection();
+            app.UseCors(corsPolicy);
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(corsPolicy);
-
-
+            
             app.MapControllers();
+            app.MapHub<BidsHub>("/hubs/bids");
 
 
             app.Run();

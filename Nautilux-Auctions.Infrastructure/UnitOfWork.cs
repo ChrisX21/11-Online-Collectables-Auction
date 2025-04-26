@@ -1,5 +1,4 @@
 using Nautilux_Auctions.Application.Abstracts;
-using Nautilux_Auctions.Application.Services;
 using Nautilux_Auctions.Infrastructure.Repositories;
 
 namespace Nautilux_Auctions.Infrastructure;
@@ -13,10 +12,14 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         Listings = new ListingRepository(_context);
         Categories = new CategoriesRepository(_context);
+        Bids = new BidsRepository(_context);
+        Reviews = new ReviewsRepository(_context);
     }
 
     public IListingRepository Listings { get; }
     public ICategoriesRepository Categories { get; }
+    public IBidsRepository Bids { get; }
+    public IReviewsRepository Reviews { get; } 
 
     public async Task<int> SaveChangesAsync()
     {
