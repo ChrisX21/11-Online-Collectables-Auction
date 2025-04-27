@@ -33,4 +33,12 @@ public class BidsRepository : IBidsRepository
             .OrderByDescending(b => b.Timestamp)
             .ToListAsync();
     }
+
+    public async Task<Bid?> GetCurrentBidForListing(Listing listing)
+    {
+        return await _context.Bids
+            .Where(b => b.ListingId == listing.Id)
+            .OrderByDescending(b => b.Amount)
+            .FirstOrDefaultAsync();
+    }
 }

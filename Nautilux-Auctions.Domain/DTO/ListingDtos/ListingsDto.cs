@@ -1,3 +1,4 @@
+using Nautilux_Auctions.Domain.DTO.BidsDto;
 using Nautilux_Auctions.Domain.Entities;
 using Nautilux_Auctions.Domain.Enums;
 
@@ -10,8 +11,9 @@ public class ListingsDto
     public string Description { get; set; }
     public decimal StartingPrice { get; set; }
     public Image? Image { get; set; }
-    public Bid? CurrentBid { get; set; }
+    public BidDto? CurrentBid { get; set; }
     public DateTime EndDate { get; set; }
     public ListingStatus Status { get; set; }
+    public Guid SellerId { get; set; }
     public string StringStatus { get; set; }
 }

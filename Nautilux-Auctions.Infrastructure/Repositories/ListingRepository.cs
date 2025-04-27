@@ -12,19 +12,19 @@ public class ListingRepository : IListingRepository
     {
         _context = context;
     }
-    public async Task<Listing> CreateListingAsync(Listing listing)
+    public async Task<Listing?> CreateListingAsync(Listing? listing)
     {
         await _context.Listings.AddAsync(listing);
         return listing;
     }
 
-    public Task<Listing> UpdateListingAsync(Listing listing)
+    public Task<Listing?> UpdateListingAsync(Listing? listing)
     {
         _context.Listings.Update(listing);
         return Task.FromResult(listing);
     }
 
-    public Task DeleteListingAsync(Listing listing)
+    public Task DeleteListingAsync(Listing? listing)
     {
         _context.Listings.Remove(listing);
         return Task.CompletedTask;
@@ -43,6 +43,9 @@ public class ListingRepository : IListingRepository
     {
         return await _context.Listings
             .Select(l => l)
+            .Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
             .ToListAsync();
     }
 
@@ -50,20 +53,39 @@ public class ListingRepository : IListingRepository
     {
         return await _context.Listings
             .Select(l => l)
+            .Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
             .Where(l => l.SellerId == userId)
             .ToListAsync();
+    }
+
+    public async Task<Listing?> GetListingByNameAsync(string name)
+    {
+        return await _context.Listings
+            .Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
+            .FirstOrDefaultAsync(l => l.Title == name);
     }
 
     public async Task<IEnumerable<Listing>> GetActiveListingsAsync()
     {
         return await _context.Listings 
             .Where(l => l.Status == ListingStatus.Active)
+            .Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
             .ToListAsync();
         
     }
-
-    public Task<IEnumerable<Listing>> GetClosedListingsAsync()
+    public async Task<IEnumerable<Listing>> GetListingByCategoryAsync(int categoryId)
     {
-        throw new NotImplementedException();
+        return await _context.Listings
+            .Where(l => l.CategoryId == categoryId)
+            .Include(l => l.Images)
+            .Include(l => l.Bids)
+            .Include(l => l.Seller)
+            .ToListAsync();
     }
 }

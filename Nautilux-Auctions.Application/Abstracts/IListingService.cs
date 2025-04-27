@@ -5,10 +5,11 @@ namespace Nautilux_Auctions.Application.Abstracts;
 
 public interface IListingService
 {
-    Task<Listing> CreateListingAsync(CreateListingDto listing);
+    Task<ListingResponseDto> CreateListingAsync(CreateListingDto listing);
     Task<IEnumerable<ListingsDto>> GetAllListingsAsync();
     Task<IEnumerable<ListingsDto>> GetActiveListingsAsync();
-    Task<Listing> UpdateListingAsync(int id, CreateListingDto listing);
+    Task<IEnumerable<ListingsDto>> GetListingsByCategoryAsync(string categoryName);
+    Task<ListingResponseDto> UpdateListingAsync(CreateListingDto listing);
     Task<ListingResponseDto?> GetListingByIdAsync(int listingId);
     Task RemoveListingAsync(int listingId);
     

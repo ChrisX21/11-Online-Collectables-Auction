@@ -10,6 +10,7 @@ using Nautilux_Auctions.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 using Nautilux_Auctions.Handlers;
 using Nautilux_Auctions.Application.Services;
 using Microsoft.OpenApi.Models;
@@ -24,9 +25,7 @@ namespace Nautilux_Auctions
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllers();
-
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

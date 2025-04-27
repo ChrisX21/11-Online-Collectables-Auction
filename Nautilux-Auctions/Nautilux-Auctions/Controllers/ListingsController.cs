@@ -17,8 +17,7 @@ public class ListingsController : Controller
     {
         _listingService = listingService;
     }
-    [HttpGet]
-    [Authorize]
+    [HttpGet, Authorize]
     public async Task<IActionResult> GetListings()
     {
         var listings = await _listingService.GetAllListingsAsync();
@@ -29,8 +28,7 @@ public class ListingsController : Controller
         return Ok(listings);
     }
 
-    [HttpGet("active")]
-    [Authorize]
+    [HttpGet("active"), Authorize]
     public async Task<IActionResult> GetActiveListings()
     {
         var listings = await _listingService.GetActiveListingsAsync();
@@ -42,8 +40,7 @@ public class ListingsController : Controller
         return Ok(listings);
     }
     
-    [HttpPost]
-    [Authorize]
+    [HttpPost, Authorize]
     public async Task<IActionResult> CreateListing([FromBody] CreateListingDto listing)
     {
         if (!ModelState.IsValid)
@@ -59,42 +56,11 @@ public class ListingsController : Controller
         listing.SellerId = Guid.Parse(userId);
                 
         var createdListing = await _listingService.CreateListingAsync(listing);
-        var response = new ListingResponseDto
-        {
-            ListingId = createdListing.Id,
-            Title = createdListing.Title,
-            Description = createdListing.Description,
-            StartingPrice = createdListing.StartingPrice,
-            EndDate = createdListing.EndDate,
-            StartDate = createdListing.StartDate,
-            ReservePrice = createdListing.ReservePrice,
-            BuyNowPrice = createdListing.BuyNowPrice,
-            Origin = createdListing.Origin,
-            Year = createdListing.Year,
-            Dimensions = createdListing.Dimensions,
-            Materials = createdListing.Materials,
-            AuthenticityId = createdListing.AuthenticityId,
-            ShippingOptions = createdListing.ShippingOptions,
-            CategoryId = createdListing.CategoryId,
-            Condition = createdListing.Condition,
-            IsFeatured = createdListing.IsFeatured,
-            IsActive = createdListing.IsActive,
-            Status = createdListing.Status,
-            StringStatus = createdListing.Status.ToString(),
-            Images = createdListing.Images.Select(image => new ImageResponseDto()
-            {
-                Url = image.Url,
-                IsPrimary = image.IsPrimary,
-                Caption = image.Caption,
-                DisplayOrder = image.DisplayOrder,
-            }).ToList(),
-            SellerId = createdListing.SellerId,
-        };
-        return CreatedAtAction(nameof(GetListings), new { id = createdListing.Id }, response);
+        
+        return CreatedAtAction(nameof(GetListings), new { id = createdListing.ListingId }, createdListing);
     }
     
-    [HttpPut("{id}")]
-    [Authorize]
+    [HttpPut("{id}"), Authorize]
     public async Task<IActionResult> UpdateListing(int id, [FromBody] CreateListingDto listing)
     {
         if (!ModelState.IsValid)
@@ -108,49 +74,16 @@ public class ListingsController : Controller
             return Unauthorized();
         }
         
-        var updatedListing = await _listingService.UpdateListingAsync(id, listing);
+        var updatedListing = await _listingService.UpdateListingAsync(listing);
         if (updatedListing == null)
         {
             return NotFound($"Listing with id {id} not found.");
         }
         
-        var response = new ListingResponseDto
-        {
-            ListingId = listing.ListingId,
-            Title = listing.Title,
-            Description = listing.Description,
-            StartingPrice = listing.StartingPrice,
-            EndDate = listing.EndDate,
-            StartDate = listing.StartDate,
-            ReservePrice = listing.ReservePrice,
-            BuyNowPrice = listing.BuyNowPrice,
-            Origin = listing.Origin,
-            Year = listing.Year,
-            Dimensions = listing.Dimensions,
-            Materials = listing.Materials,
-            AuthenticityId = listing.AuthenticityId,
-            ShippingOptions = listing.ShippingOptions,
-            CategoryId = listing.CategoryId,
-            Condition = listing.Condition,
-            IsFeatured = listing.IsFeatured,
-            IsActive = listing.IsActive,
-            Status = listing.Status,
-            StringStatus = listing.Status.ToString(),
-            Images = listing.Images.Select(image => new ImageResponseDto()
-            {
-                Url = image.Url,
-                IsPrimary = image.IsPrimary,
-                Caption = image.Caption,
-                DisplayOrder = image.DisplayOrder,
-            }).ToList(),
-            SellerId = listing.SellerId,
-        };
-        
-        return Ok(response);
+        return Ok(updatedListing);
     }
     
-    [HttpGet("{id}")]
-    [Authorize]
+    [HttpGet("{id}"), Authorize]
     public async Task<IActionResult> GetListingById(int id)
     {
         var listing = await _listingService.GetListingByIdAsync(id);
@@ -161,8 +94,18 @@ public class ListingsController : Controller
         return Ok(listing);
     }
     
-    [HttpDelete("{id}")]
-    [Authorize]
+    [HttpGet("category/{categoryName}"), Authorize]
+    public async Task<IActionResult> GetListingsByCategory(string categoryName)
+    {
+        var listings = await _listingService.GetListingsByCategoryAsync(categoryName);
+        if (listings == null || !listings.Any())
+        {
+            return NotFound($"No listings found in category {categoryName}.");
+        }
+        return Ok(listings);
+    }
+    
+    [HttpDelete("{id}"), Authorize]
     public async Task<IActionResult> DeleteListing(int id)
     {
         try
