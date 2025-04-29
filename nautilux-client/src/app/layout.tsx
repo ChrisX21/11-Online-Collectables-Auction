@@ -6,6 +6,7 @@ import Navbar from "@/components/navbar";
 import LoadingScreen from "@/components/loading-screen";
 import { Suspense } from "react";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Navbar />
           <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
           <Footer />
+          <Toaster position="top-right" />
         </AuthProvider>
       </body>
     </html>

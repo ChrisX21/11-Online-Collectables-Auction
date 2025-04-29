@@ -5,5 +5,5 @@ namespace Nautilux_Auctions.Application.Abstracts;
 public interface IBidsService
 {
     Task<BidResult> PlaceBid(int listingId, decimal bidAmount, Guid userId);
-    Task<decimal> GetCurrentBid(int auctionId);
+    Task<BidResult> GetCurrentBid(int auctionId);
 }

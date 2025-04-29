@@ -17,7 +17,7 @@ public class ListingsController : Controller
     {
         _listingService = listingService;
     }
-    [HttpGet, Authorize]
+    [HttpGet]
     public async Task<IActionResult> GetListings()
     {
         var listings = await _listingService.GetAllListingsAsync();
@@ -28,7 +28,23 @@ public class ListingsController : Controller
         return Ok(listings);
     }
 
-    [HttpGet("active"), Authorize]
+    [HttpGet("user"), Authorize]
+    public async Task<IActionResult> GetUserListings()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+        var listings = await _listingService.GetListingsForUserAsync(Guid.Parse(userId));
+        if (listings == null || !listings.Any())
+        {
+            return NotFound("No listings found.");
+        }
+        return Ok(listings);
+    }
+
+    [HttpGet("active")]
     public async Task<IActionResult> GetActiveListings()
     {
         var listings = await _listingService.GetActiveListingsAsync();
@@ -83,7 +99,7 @@ public class ListingsController : Controller
         return Ok(updatedListing);
     }
     
-    [HttpGet("{id}"), Authorize]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetListingById(int id)
     {
         var listing = await _listingService.GetListingByIdAsync(id);
@@ -94,7 +110,18 @@ public class ListingsController : Controller
         return Ok(listing);
     }
     
-    [HttpGet("category/{categoryName}"), Authorize]
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeaturedListings()
+    {
+        var listings = await _listingService.GetFeaturedListingsAsync();
+        if (listings == null || !listings.Any())
+        {
+            return NotFound("No featured listings found.");
+        }
+        return Ok(listings);
+    }
+    
+    [HttpGet("category/{categoryName}")]
     public async Task<IActionResult> GetListingsByCategory(string categoryName)
     {
         var listings = await _listingService.GetListingsByCategoryAsync(categoryName);

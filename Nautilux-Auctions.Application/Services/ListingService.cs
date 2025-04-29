@@ -299,7 +299,45 @@ public class ListingService : IListingService
             
             return response;
         }
-        
+
+        public async Task<IEnumerable<ListingsDto>> GetFeaturedListingsAsync()
+        {
+            var listings = await _unitOfWork.Listings.GetFeaturedListingsAsync();
+            if (listings == null || !listings.Any())
+            {
+                throw new KeyNotFoundException("No featured listings found.");
+            }
+
+            return listings.Select(listing => new ListingsDto
+            {
+                Id = listing.Id,
+                Title = listing.Title,
+                Description = listing.Description,
+                StartingPrice = listing.StartingPrice,
+                CurrentBid = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result != null
+                    ? new BidDto
+                    {
+                        BidId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Id,
+                        Amount = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Amount,
+                        UserId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.BidderId,
+                        listingId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.ListingId,
+                        Timestamp = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Timestamp
+                    }
+                    : null,
+                EndDate = listing.EndDate,
+                Status = listing.Status,
+                StringStatus = listing.Status.ToString(),
+                SellerId = listing.SellerId,
+                Image = listing.Images.Select(imageDto => new Image
+                {
+                    Url = imageDto.Url,
+                    IsPrimary = imageDto.IsPrimary,
+                    Caption = imageDto.Caption,
+                    DisplayOrder = imageDto.DisplayOrder,
+                }).FirstOrDefault(),
+            });
+        }
+
         public async Task<ListingResponseDto?> GetListingByIdAsync(int id)
         {
             var listing = await _unitOfWork.Listings.GetListingByIdAsync(id);
@@ -343,6 +381,48 @@ public class ListingService : IListingService
             };
             
             return response;
+        }
+        
+        public async Task<IEnumerable<ListingsDto>> GetListingsForUserAsync(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("User ID cannot be empty", nameof(userId));
+            }
+
+            var userListings = await _unitOfWork.Listings.GetListingsBySellerIdAsync(userId);
+            if (userListings == null || !userListings.Any())
+            {
+                throw new KeyNotFoundException($"No listings found for user with ID {userId}.");
+            }
+
+            return userListings.Select(listing => new ListingsDto
+            {
+                Id = listing.Id,
+                Title = listing.Title,
+                Description = listing.Description,
+                StartingPrice = listing.StartingPrice,
+                CurrentBid = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result != null ?
+                    new BidDto
+                    {
+                        BidId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Id,
+                        Amount = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Amount,
+                        UserId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.BidderId,
+                        listingId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.ListingId,
+                        Timestamp = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Timestamp
+                    } : null,
+                EndDate = listing.EndDate,
+                Status = listing.Status,
+                StringStatus = listing.Status.ToString(),
+                SellerId = listing.SellerId,
+                Image = listing.Images.Select(imageDto => new Image
+                {
+                    Url = imageDto.Url,
+                    IsPrimary = imageDto.IsPrimary,
+                    Caption = imageDto.Caption,
+                    DisplayOrder = imageDto.DisplayOrder,
+                }).FirstOrDefault(),
+            });
         }
 
         public async Task RemoveListingAsync(int listingId)

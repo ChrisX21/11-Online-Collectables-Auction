@@ -1,12 +1,19 @@
-'use client';
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '../utils/axios';
+"use client";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import api from "../utils/axios";
 
 interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
+  createdAt: Date;
 }
 
 interface AuthContextType {
@@ -27,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     try {
       setIsLoading(true);
-      const response = await api.get('/auth/details');
+      const response = await api.get("/auth/details");
       setUser(response.data);
       setIsAuthenticated(true);
     } catch (error) {
@@ -40,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
+      await api.post("/auth/logout");
     } finally {
       setUser(null);
       setIsAuthenticated(false);
@@ -52,13 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        isAuthenticated, 
-        user, 
-        isLoading, 
-        checkAuth, 
-        logout 
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        user,
+        isLoading,
+        checkAuth,
+        logout,
       }}
     >
       {children}
@@ -69,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

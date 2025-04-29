@@ -49,9 +49,30 @@ public class BidsService : IBidsService
         };
     }
 
-    public async Task<decimal> GetCurrentBid(int listingId)
+    public async Task<BidResult> GetCurrentBid(int listingId)
     {
         var highestBid = await _unitOfWork.Bids.GetHighestBidForListing(listingId);
-        return highestBid?.Amount ?? 0;
+
+        if (highestBid == null)
+        {
+            return new BidResult
+            {
+                IsSuccessful = true,
+                CurrentBid = null
+            };
+        }
+
+        return new BidResult
+        {
+            IsSuccessful = true,
+            CurrentBid = new BidDto
+            {
+                listingId = highestBid.ListingId,
+                UserId = highestBid.BidderId,
+                Amount = highestBid.Amount,
+                Timestamp = highestBid.Timestamp
+            }
+        };
     }
+
 }

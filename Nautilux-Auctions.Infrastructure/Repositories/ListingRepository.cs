@@ -60,6 +60,25 @@ public class ListingRepository : IListingRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Listing>> GetFeaturedListingsAsync()
+    {
+        return await _context.Listings
+            .Include(l => l.Images)
+            .Include(l => l.Seller)
+            .Include(l => l.Bids)
+            .Where(l => l.IsFeatured == true).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Listing>> GetListingsBySellerIdAsync(Guid sellerId)
+    {
+        return await _context.Listings
+            .Include(l => l.Images)
+            .Include(l => l.Seller)
+            .Include(l => l.Bids)
+            .Where(l => l.SellerId == sellerId)
+            .ToListAsync();
+    }
+
     public async Task<Listing?> GetListingByNameAsync(string name)
     {
         return await _context.Listings

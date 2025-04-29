@@ -11,6 +11,8 @@ public interface IListingRepository
     Task<Listing?> GetListingByIdAsync(int listingId);
     Task<IEnumerable<Listing>> GetAllListingsAsync();
     Task<IEnumerable<Listing>> GetListingByUserIdAsync(Guid userId);
+    Task<IEnumerable<Listing>> GetFeaturedListingsAsync();
+    Task<IEnumerable<Listing>> GetListingsBySellerIdAsync(Guid sellerId);
     Task<Listing?> GetListingByNameAsync(string name);
     Task<IEnumerable<Listing>> GetActiveListingsAsync();
     Task<IEnumerable<Listing>> GetListingByCategoryAsync(int categoryId);

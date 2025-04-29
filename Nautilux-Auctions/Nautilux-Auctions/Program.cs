@@ -176,7 +176,7 @@ namespace Nautilux_Auctions
             app.UseAuthorization();
             
             app.MapControllers();
-            app.MapHub<BidsHub>("/hubs/bids");
+            app.MapHub<BidsHub>("/bids");
 
 
             app.Run();

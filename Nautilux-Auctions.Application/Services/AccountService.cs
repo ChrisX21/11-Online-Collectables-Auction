@@ -122,7 +122,8 @@ namespace Nautilux_Auctions.Application.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = role
+                Role = role,
+                CreatedAt = user.CreatedAtUtc,
             };
 
             return userDetails;

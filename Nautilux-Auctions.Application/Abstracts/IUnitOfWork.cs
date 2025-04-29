@@ -7,5 +7,6 @@ public interface IUnitOfWork : IDisposable
     IBidsRepository Bids { get; }
     IReviewsRepository Reviews { get; }
     IQuestionsRepository Questions { get; }
+    IWishListRepository WishLists { get; }
     Task<int> SaveChangesAsync();
 }
