@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import {
-  FaHeart,
   FaBars,
   FaTimes,
   FaUser,
@@ -62,10 +61,6 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="text-white hover:text-gray-200 transition-colors">
-              <FaHeart className="w-4 h-4" />
-            </button>
-
             {isAuthenticated ? (
               <div className="hidden md:flex items-center space-x-3">
                 <div className="relative group">
@@ -78,12 +73,6 @@ export default function Navbar() {
                       className="block px-4 py-1.5 text-gray-800 hover:bg-gray-100 text-sm"
                     >
                       Profile
-                    </Link>
-                    <Link
-                      href="/my-bids"
-                      className="block px-4 py-1.5 text-gray-800 hover:bg-gray-100 text-sm"
-                    >
-                      My Bids
                     </Link>
                     <button
                       onClick={logout}
@@ -211,14 +200,6 @@ export default function Navbar() {
                 >
                   <FaUser className="w-5 h-5" />
                   <span>Profile</span>
-                </Link>
-                <Link
-                  href="/my-bids"
-                  className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-800 rounded-md transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <FaHistory className="w-5 h-5" />
-                  <span>My Bids</span>
                 </Link>
                 <button
                   onClick={() => {

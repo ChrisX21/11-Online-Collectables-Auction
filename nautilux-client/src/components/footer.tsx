@@ -69,22 +69,6 @@ export default function Footer() {
                     Catalog
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/how-it-works"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    How It Works
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/sell"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    Sell With Us
-                  </Link>
-                </li>
               </ul>
             </div>
 
@@ -97,30 +81,6 @@ export default function Footer() {
                     className="text-gray-300 hover:text-white transition-colors text-sm"
                   >
                     About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    Privacy
                   </Link>
                 </li>
               </ul>

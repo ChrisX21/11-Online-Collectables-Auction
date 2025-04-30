@@ -123,33 +123,6 @@ public static class DbInitializer
         {
             categories[category.Name] = category;
         }
-
-        var nauticalAntiques = await context.Categories.FirstAsync(c => c.Name == "Nautical Antiques");
-        var maritimeArt = await context.Categories.FirstAsync(c => c.Name == "Maritime Art");
-        var navigationTools = await context.Categories.FirstAsync(c => c.Name == "Navigation Tools");
-        var shipModels = await context.Categories.FirstAsync(c => c.Name == "Ship Models");
-
-        var subcategories = new List<Category>
-        {
-            new Category { Name = "Ship's Wheels", Description = "Antique and decorative steering wheels", ParentCategoryId = nauticalAntiques.Id },
-            new Category { Name = "Ships in Bottles", Description = "Miniature ships crafted inside glass bottles", ParentCategoryId = nauticalAntiques.Id },
-            new Category { Name = "Diving Helmets", Description = "Antique diving equipment and helmets", ParentCategoryId = nauticalAntiques.Id },
-            new Category { Name = "Maritime Paintings", Description = "Paintings depicting naval scenes and ships", ParentCategoryId = maritimeArt.Id },
-            new Category { Name = "Scrimshaw Art", Description = "Carved whale bone and ivory artifacts", ParentCategoryId = maritimeArt.Id },
-            new Category { Name = "Nautical Charts", Description = "Historic and collectible sea maps", ParentCategoryId = navigationTools.Id },
-            new Category { Name = "Compasses", Description = "Vintage and antique navigational compasses", ParentCategoryId = navigationTools.Id },
-            new Category { Name = "Sextants", Description = "Historic celestial navigation tools", ParentCategoryId = navigationTools.Id },
-            new Category { Name = "Wooden Sailing Ships", Description = "Wooden models of classic sailing vessels", ParentCategoryId = shipModels.Id },
-            new Category { Name = "Historic Warships", Description = "Models of famous naval warships", ParentCategoryId = shipModels.Id }
-        };
-
-        await context.Categories.AddRangeAsync(subcategories);
-        await context.SaveChangesAsync();
-        
-        foreach (var subcategory in subcategories)
-        {
-            categories[subcategory.Name] = subcategory;
-        }
         
         return categories;
     }
