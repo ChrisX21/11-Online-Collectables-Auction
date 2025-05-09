@@ -87,7 +87,7 @@ export default function AuctionDetails() {
   const [isAnsweringQuestion, setIsAnsweringQuestion] = useState<number | null>(
     null
   );
-  const [answerText, setAnswerText] = useState("");
+  const [answerTexts, setAnswerTexts] = useState<Record<number, string>>({});
 
   // Use SignalR Hook
   const {
@@ -272,7 +272,7 @@ export default function AuctionDetails() {
       return;
     }
 
-    if (!answerText.trim()) {
+    if (!answerTexts[questionId] || !answerTexts[questionId].trim()) {
       toast.error("Please enter an answer");
       return;
     }
@@ -280,12 +280,16 @@ export default function AuctionDetails() {
     setIsAnsweringQuestion(questionId);
     try {
       await api.put(`/questions`, {
+        answerText: answerTexts[questionId],
         listingId: numericId,
         id: questionId,
-        answerText: answerText,
+        questionText: questions.find((q) => q.id === questionId)?.questionText,
+        askerId: questions.find((q) => q.id === questionId)?.askerId,
+        isPublic: true,
       });
+
       toast.success("Your answer has been submitted");
-      setAnswerText("");
+      setAnswerTexts({ ...answerTexts, [questionId]: "" });
       setIsAnsweringQuestion(null);
       fetchQuestions();
     } catch (error) {
@@ -670,12 +674,13 @@ export default function AuctionDetails() {
                         <div className="mt-3">
                           <textarea
                             rows={2}
-                            value={
-                              isAnsweringQuestion === question.id
-                                ? answerText
-                                : ""
+                            value={answerTexts[question.id] || ""}
+                            onChange={(e) =>
+                              setAnswerTexts({
+                                ...answerTexts,
+                                [question.id]: e.target.value,
+                              })
                             }
-                            onChange={(e) => setAnswerText(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-black focus:border-black transition-colors"
                             placeholder="Answer this question..."
                           />
@@ -698,17 +703,6 @@ export default function AuctionDetails() {
                   ))
                 )}
               </div>
-            </div>
-
-            {/* Seller Information */}
-            <div className="p-4 bg-gray-50 rounded-md">
-              <h3 className="font-medium mb-2">Seller Information</h3>
-              <p className="text-sm text-gray-600 mb-2">
-                Input some information for the seller
-              </p>
-              <button className="text-sm text-blue-900 hover:underline">
-                Contact Seller
-              </button>
             </div>
           </div>
         </div>
