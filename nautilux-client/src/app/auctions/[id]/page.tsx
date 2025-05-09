@@ -20,6 +20,17 @@ interface Bid {
   userName?: string;
 }
 
+interface Question {
+  id: number;
+  askerId: string;
+  listingId: number;
+  questionText: string;
+  answerText: string | null;
+  questionTimestamp: string;
+  answerTimestamp: string | null;
+  isPublic: boolean;
+}
+
 interface ListingImage {
   id: number;
   url: string;
@@ -54,6 +65,7 @@ interface AuctionDetails {
   stringStatus: string;
   images: ListingImage[];
   bids?: Bid[];
+  questions?: Question[];
 }
 
 export default function AuctionDetails() {
@@ -69,6 +81,13 @@ export default function AuctionDetails() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [recentBids, setRecentBids] = useState<Bid[]>([]);
   const [isBidding, setIsBidding] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [isAskingQuestion, setIsAskingQuestion] = useState(false);
+  const [isAnsweringQuestion, setIsAnsweringQuestion] = useState<number | null>(
+    null
+  );
+  const [answerText, setAnswerText] = useState("");
 
   // Use SignalR Hook
   const {
@@ -157,6 +176,23 @@ export default function AuctionDetails() {
     }
   }, [numericId, getCurrentBid, isConnected]);
 
+  const fetchQuestions = useCallback(async () => {
+    if (!id) return;
+
+    try {
+      const response = await api.get(`/questions/listing/${id}`);
+      setQuestions(response.data);
+    } catch (error) {
+      console.error("Failed to fetch questions:", error);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchQuestions();
+    }
+  }, [id, fetchQuestions]);
+
   const handleBidSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -194,6 +230,69 @@ export default function AuctionDetails() {
       toast.error("Failed to place your bid. Please try again.");
     } finally {
       setIsBidding(false);
+    }
+  };
+
+  const handleAskQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isAuthenticated) {
+      router.push(`/auth/sign-in?redirect=/auctions/${id}`);
+      return;
+    }
+
+    if (!newQuestion.trim()) {
+      toast.error("Please enter a question");
+      return;
+    }
+
+    setIsAskingQuestion(true);
+    try {
+      const questionData = {
+        listingId: numericId,
+        questionText: newQuestion,
+        answerText: null,
+        isPublic: true,
+      };
+
+      await api.post("/questions", questionData);
+      toast.success("Your question has been submitted");
+      setNewQuestion("");
+      fetchQuestions();
+    } catch (error) {
+      console.error("Failed to submit question:", error);
+      toast.error("Failed to submit your question. Please try again.");
+    } finally {
+      setIsAskingQuestion(false);
+    }
+  };
+
+  const handleAnswerQuestion = async (questionId: number) => {
+    if (!isAuthenticated || !isUserSeller) {
+      return;
+    }
+
+    if (!answerText.trim()) {
+      toast.error("Please enter an answer");
+      return;
+    }
+
+    setIsAnsweringQuestion(questionId);
+    try {
+      await api.put(`/questions`, {
+        listingId: numericId,
+        id: questionId,
+        answerText: answerText,
+      });
+      toast.success("Your answer has been submitted");
+      setAnswerText("");
+      setIsAnsweringQuestion(null);
+      fetchQuestions();
+    } catch (error) {
+      console.error("Failed to submit answer:", error);
+      toast.error("Failed to submit your answer. Please try again.");
+    } finally {
+      setIsAnsweringQuestion(null);
     }
   };
 
@@ -493,6 +592,111 @@ export default function AuctionDetails() {
                 <p className="text-gray-700 whitespace-pre-line">
                   {auction.description}
                 </p>
+              </div>
+            </div>
+
+            {/* Q&A Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-medium mb-4">Questions & Answers</h2>
+
+              {/* Ask a question form */}
+              {!isUserSeller && (
+                <form onSubmit={handleAskQuestion} className="mb-6">
+                  <div className="mb-3">
+                    <label
+                      htmlFor="question"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Ask a Question
+                    </label>
+                    <textarea
+                      id="question"
+                      rows={3}
+                      value={newQuestion}
+                      onChange={(e) => setNewQuestion(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black transition-colors"
+                      placeholder="What would you like to know about this item?"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isAskingQuestion}
+                    className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+                  >
+                    {isAskingQuestion ? "Submitting..." : "Submit Question"}
+                  </button>
+                </form>
+              )}
+
+              {/* Questions list */}
+              <div className="space-y-4">
+                {questions.length === 0 ? (
+                  <p className="text-gray-500 italic">No questions yet</p>
+                ) : (
+                  questions.map((question) => (
+                    <div
+                      key={question.id}
+                      className="border border-gray-200 rounded-lg p-4"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-medium">
+                            Q: {question.questionText}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Asked{" "}
+                            {formatDistanceToNow(
+                              new Date(question.questionTimestamp),
+                              { addSuffix: true }
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      {question.answerText ? (
+                        <div className="mt-3 pl-4 border-l-2 border-gray-200">
+                          <p className="text-sm">A: {question.answerText}</p>
+                          <p className="text-xs text-gray-500">
+                            Answered{" "}
+                            {question.answerTimestamp &&
+                              formatDistanceToNow(
+                                new Date(question.answerTimestamp),
+                                { addSuffix: true }
+                              )}
+                          </p>
+                        </div>
+                      ) : isUserSeller ? (
+                        <div className="mt-3">
+                          <textarea
+                            rows={2}
+                            value={
+                              isAnsweringQuestion === question.id
+                                ? answerText
+                                : ""
+                            }
+                            onChange={(e) => setAnswerText(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-black focus:border-black transition-colors"
+                            placeholder="Answer this question..."
+                          />
+                          <button
+                            onClick={() => handleAnswerQuestion(question.id)}
+                            disabled={isAnsweringQuestion === question.id}
+                            className="mt-2 px-3 py-1 bg-black text-white text-sm rounded-md hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+                          >
+                            {isAnsweringQuestion === question.id
+                              ? "Submitting..."
+                              : "Submit Answer"}
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="text-sm italic text-gray-500 mt-2">
+                          Awaiting seller's response
+                        </p>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

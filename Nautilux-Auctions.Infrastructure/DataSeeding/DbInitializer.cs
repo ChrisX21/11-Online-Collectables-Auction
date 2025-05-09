@@ -113,7 +113,12 @@ public static class DbInitializer
             new Category { Name = "Maritime Art", Description = "Paintings, sculptures, and art with nautical themes" },
             new Category { Name = "Navigation Tools", Description = "Historic and modern navigational instruments" },
             new Category { Name = "Ship Models", Description = "Replica models of ships and vessels" },
-            new Category { Name = "Naval Memorabilia", Description = "Military and naval collectibles and artifacts" }
+            new Category { Name = "Ship's Wheels", Description = "Replica models of ship's steering wheels" },
+            new Category { Name = "Sextants", Description = "Navigation Sextants" },
+            new Category { Name = "Naval Memorabilia", Description = "Military and naval collectibles and artifacts" },
+            new Category { Name = "Historic Warships", Description = "Models and artifacts from historic warships" },
+            new Category { Name = "Maritime Paintings", Description = "Paintings featuring maritime scenes and naval history" },
+            new Category { Name = "Scrimshaw Art", Description = "Engravings on ivory or bone, often from whaling expeditions" }
         };
 
         await context.Categories.AddRangeAsync(mainCategories);
