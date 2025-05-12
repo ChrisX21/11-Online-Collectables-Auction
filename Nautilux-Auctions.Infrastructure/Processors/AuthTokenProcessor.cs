@@ -65,7 +65,7 @@ namespace Nautilux_Auctions.Infrastructure.Processors
                 Expires = expiration,
                 IsEssential = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.None
             });
         }
 

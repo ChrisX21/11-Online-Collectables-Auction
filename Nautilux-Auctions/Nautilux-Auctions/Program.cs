@@ -76,7 +76,7 @@ namespace Nautilux_Auctions
                 options.AddPolicy(name: corsPolicy, policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:3000")
+                        .WithOrigins("http://localhost:3000", "https://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
