@@ -527,13 +527,7 @@ export default function AuctionDetails() {
                     {isBidding ? "Placing Bid..." : "Place Bid"}
                   </button>
                 </form>
-                {auction.buyNowPrice && (
-                  <div className="mt-4">
-                    <button className="w-full py-3 border border-black text-black rounded-md hover:bg-gray-100 transition-colors">
-                      Buy Now for ${auction.buyNowPrice.toFixed(2)}
-                    </button>
-                  </div>
-                )}
+
                 <p className="text-xs text-gray-500 mt-2">
                   By placing a bid, you agree to our Terms of Service and
                   Auction Rules.

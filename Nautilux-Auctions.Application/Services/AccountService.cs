@@ -38,6 +38,12 @@ namespace Nautilux_Auctions.Application.Services
             {
                 throw new UserRegistrationFailedException(result.Errors.Select(x => x.Description));
             }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                throw new UserRegistrationFailedException(roleResult.Errors.Select(x => x.Description));
+            }
         }
 
         public async Task LoginAsync(LoginRequest loginRequest)

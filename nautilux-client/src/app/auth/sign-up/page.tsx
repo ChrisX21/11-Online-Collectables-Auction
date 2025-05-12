@@ -17,7 +17,30 @@ export default function SignUp() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const validatePassword = (password: string): string[] => {
+    const errors: string[] = [];
+
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters long");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must contain at least one uppercase letter");
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push("Password must contain at least one lowercase letter");
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push("Password must contain at least one digit");
+    }
+    if (!/[^A-Za-z0-9]/.test(password)) {
+      errors.push("Password must contain at least one special character");
+    }
+
+    return errors;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,12 +48,25 @@ export default function SignUp() {
       ...prev,
       [name]: value,
     }));
+
+    // Validate password on change
+    if (name === "password") {
+      setPasswordErrors(validatePassword(value));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    // Validate password before submission
+    const passwordValidationErrors = validatePassword(formData.password);
+    if (passwordValidationErrors.length > 0) {
+      setPasswordErrors(passwordValidationErrors);
+      setIsLoading(false);
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
@@ -54,6 +90,18 @@ export default function SignUp() {
       setIsLoading(false);
     }
   };
+
+  // Password strength indicator
+  const getPasswordStrength = (): { text: string; color: string } => {
+    if (!formData.password) return { text: "", color: "" };
+
+    const errors = passwordErrors.length;
+    if (errors === 0) return { text: "Strong", color: "text-green-600" };
+    if (errors <= 2) return { text: "Medium", color: "text-yellow-600" };
+    return { text: "Weak", color: "text-red-600" };
+  };
+
+  const passwordStrength = getPasswordStrength();
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -172,6 +220,25 @@ export default function SignUp() {
                   className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black sm:text-sm"
                   placeholder="••••••••"
                 />
+                {formData.password && (
+                  <div className="mt-1">
+                    <div className="flex items-center">
+                      <span className="text-xs mr-2">Password strength:</span>
+                      <span
+                        className={`text-xs font-medium ${passwordStrength.color}`}
+                      >
+                        {passwordStrength.text}
+                      </span>
+                    </div>
+                    {passwordErrors.length > 0 && (
+                      <ul className="mt-1 text-xs text-red-500 list-disc pl-5">
+                        {passwordErrors.map((error, index) => (
+                          <li key={index}>{error}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <label
@@ -206,7 +273,7 @@ export default function SignUp() {
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || passwordErrors.length > 0}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (

@@ -37,21 +37,15 @@ const CONDITIONS = ["Excellent", "Very Good", "Good", "Fair", "Poor", "Ruined"];
 
 const SHIPPING_OPTIONS = ["None", "Econt", "Speedy", "ExpressOne"];
 
-const CATEGORIES = [
-  { id: 1, name: "Boats" },
-  { id: 2, name: "Navigation Equipment" },
-  { id: 3, name: "Propulsion Systems" },
-  { id: 4, name: "Marine Collectibles" },
-  { id: 5, name: "Vintage Nautical" },
-  { id: 6, name: "Maritime Art" },
-];
-
 export default function CreateAuction() {
   const { isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
   const [uploadedImages, setUploadedImages] = useState<
     Array<{ url: string; caption: string }>
   >([]);
@@ -89,6 +83,20 @@ export default function CreateAuction() {
       router.push("/auth/sign-in?redirect=/create-auction");
     }
   }, [isAuthenticated, isLoading, router]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        setError("Failed to load categories. Please try again.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   if (isLoading) {
     return (
@@ -319,7 +327,7 @@ export default function CreateAuction() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
                     >
                       <option value="">Select a category</option>
-                      {CATEGORIES.map((category) => (
+                      {categories.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>

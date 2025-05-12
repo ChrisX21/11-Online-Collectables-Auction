@@ -41,15 +41,6 @@ const CONDITIONS = ["Excellent", "Very Good", "Good", "Fair", "Poor", "Ruined"];
 
 const SHIPPING_OPTIONS = ["None", "Econt", "Speedy", "ExpressOne"];
 
-const CATEGORIES = [
-  { id: 1, name: "Boats" },
-  { id: 2, name: "Navigation Equipment" },
-  { id: 3, name: "Propulsion Systems" },
-  { id: 4, name: "Marine Collectibles" },
-  { id: 5, name: "Vintage Nautical" },
-  { id: 6, name: "Maritime Art" },
-];
-
 export default function EditAuction() {
   const { isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
@@ -58,6 +49,9 @@ export default function EditAuction() {
   const [pageLoading, setPageLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
   const [uploadedImages, setUploadedImages] = useState<
     Array<{ url: string; caption: string }>
   >([]);
@@ -86,6 +80,21 @@ export default function EditAuction() {
     categoryId: null,
     images: [],
   });
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        setError("Failed to load categories. Please try again.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Fetch auction data
   useEffect(() => {
@@ -328,6 +337,25 @@ export default function EditAuction() {
     }
   };
 
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this auction? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await api.delete(`/listings/${id}`);
+      toast.success("Auction deleted successfully");
+      router.push("/profile");
+    } catch (err) {
+      console.error("Error deleting auction:", err);
+      toast.error("Failed to delete auction. Please try again.");
+    }
+  };
+
   return (
     <main className="pt-24 min-h-screen bg-neutral-50">
       <div className="bg-blue-900 py-12 mb-8">
@@ -401,7 +429,7 @@ export default function EditAuction() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
                     >
                       <option value="">Select a category</option>
-                      {CATEGORIES.map((category) => (
+                      {categories.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>
@@ -698,12 +726,21 @@ export default function EditAuction() {
             </div>
 
             <div className="flex justify-between">
-              <Link
-                href={`/auctions/${id}`}
-                className="px-6 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </Link>
+              <div className="flex gap-4">
+                <Link
+                  href={`/auctions/${id}`}
+                  className="px-6 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Delete Auction
+                </button>
+              </div>
               <button
                 type="submit"
                 disabled={isSubmitting}

@@ -25,7 +25,7 @@ public class QuestionsService : IQuestionsService
             ListingId = question.ListingId,
             AskerId = question.AskerId,
             QuestionText = question.QuestionText,
-            QuestionTimestamp = DateTime.UtcNow,
+            QuestionTimestamp = DateTime.Now,
             IsPublic = question.IsPublic
         };
         
@@ -158,7 +158,7 @@ public class QuestionsService : IQuestionsService
             throw new InvalidOperationException("Question has already been answered");
         }
         questionEntity.AnswerText = question.AnswerText;
-        questionEntity.AnswerTimestamp = DateTime.UtcNow;
+        questionEntity.AnswerTimestamp = DateTime.Now;
         
         await _unitOfWork.Questions.AnswerQuestion(questionEntity);
         await _unitOfWork.SaveChangesAsync();

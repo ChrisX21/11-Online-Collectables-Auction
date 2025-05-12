@@ -144,10 +144,13 @@ export default function Profile() {
               <h1 className="text-3xl font-light text-white mb-2">
                 {user?.firstName} {user?.lastName}
               </h1>
-              <p className="text-blue-100 mb-4">
-                Member since{" "}
-                {user?.createdAt ? format(user.createdAt, "MMMM") : "N/A"}
+              <p className="text-blue-100 mb-1">
+                Member since: {" "}
+                {user?.createdAt
+                  ? format(user.createdAt, "dd MMMM yyyy")
+                  : "N/A"}
               </p>
+              <p className="text-blue-100 mb-4">Role: {user?.role}</p>
             </div>
           </div>
         </div>
