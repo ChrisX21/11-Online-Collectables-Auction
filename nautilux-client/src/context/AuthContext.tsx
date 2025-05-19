@@ -23,6 +23,11 @@ interface AuthContextType {
   isLoading: boolean;
   checkAuth: () => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -55,6 +60,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateProfile = async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) => {
+    try {
+      await api.put("/auth/update", data);
+      // Update the user data in the context
+      if (user) {
+        setUser({
+          ...user,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -67,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         checkAuth,
         logout,
+        updateProfile,
       }}
     >
       {children}

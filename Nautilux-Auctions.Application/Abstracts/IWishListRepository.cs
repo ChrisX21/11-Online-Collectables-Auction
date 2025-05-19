@@ -6,5 +6,5 @@ public interface IWishListRepository
 {
     Task AddToWishListAsync(WatchListItem watchListItem);
     Task RemoveFromWishListAsync(WatchListItem watchListItem);
-    Task<IEnumerable<int>> GetWishListByUserIdAsync(Guid userId);
+    Task<IEnumerable<WatchListItem>> GetWishListByUserIdAsync(Guid userId);
 }

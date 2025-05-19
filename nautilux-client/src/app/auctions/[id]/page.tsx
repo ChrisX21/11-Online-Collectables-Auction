@@ -300,6 +300,21 @@ export default function AuctionDetails() {
     }
   };
 
+  const handleDeleteQuestion = async (questionId: number) => {
+    if (!isAuthenticated) return;
+
+    if (window.confirm("Are you sure you want to delete this question?")) {
+      try {
+        await api.delete(`/questions/${questionId}`);
+        toast.success("Question deleted successfully");
+        fetchQuestions();
+      } catch (error) {
+        console.error("Failed to delete question:", error);
+        toast.error("Failed to delete question. Please try again.");
+      }
+    }
+  };
+
   const timeRemaining = auction
     ? formatDistanceToNow(new Date(auction.endDate), { addSuffix: true })
     : "";
@@ -308,10 +323,96 @@ export default function AuctionDetails() {
     : false;
   const isUserSeller = isAuthenticated && auction?.sellerId === user?.id;
 
+  // Add effect to update auction status if it's ended but not marked as completed
+  useEffect(() => {
+    if (auction && isAuctionEnded && auction.stringStatus !== "Completed") {
+      api
+        .put(`/listings/${auction.listingId}`, {
+          ...auction,
+          stringStatus: "Completed",
+          listingId: auction.listingId,
+        })
+        .then(() => {
+          fetchAuctionDetails();
+        })
+        .catch((error) => {
+          console.error("Failed to update auction status:", error);
+        });
+    }
+  }, [auction, isAuctionEnded, fetchAuctionDetails]);
+
+  const isAdmin = user?.role === "Admin";
+
+  const handleDeleteAuction = async () => {
+    if (!isAdmin || !auction) return;
+
+    if (
+      window.confirm(
+        "Are you sure you want to delete this auction? This action cannot be undone."
+      )
+    ) {
+      try {
+        await api.delete(`/listings/${auction.listingId}`);
+        toast.success("Auction deleted successfully");
+        router.push("/auctions");
+      } catch (error) {
+        console.error("Failed to delete auction:", error);
+        toast.error("Failed to delete auction");
+      }
+    }
+  };
+
+  const handleActivateAuction = async () => {
+    if (!auction || (!isUserSeller && !isAdmin)) return;
+
+    try {
+      // Create a copy of the auction with updated status
+      const updatedAuction = {
+        ...auction,
+        stringStatus: "Active",
+        isActive: true,
+        // API requires the listingId to be included
+        listingId: auction.listingId,
+      };
+
+      await api.put(`/listings/${auction.listingId}`, updatedAuction);
+      toast.success("Auction successfully activated");
+
+      // Refresh the auction data
+      fetchAuctionDetails();
+    } catch (error) {
+      console.error("Failed to activate auction:", error);
+      toast.error("Failed to activate auction. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Loading />
+      </div>
+    );
+  }
+
+  // Check if the auction is a draft and the user is not the seller or admin
+  if (
+    auction &&
+    auction.stringStatus === "Draft" &&
+    !isUserSeller &&
+    !isAdmin
+  ) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-16">
+        <h1 className="text-3xl font-light mb-4">Auction Not Available</h1>
+        <p className="text-gray-600 mb-8">
+          This auction is currently in draft mode and not publicly available.
+        </p>
+        <Link
+          href="/auctions"
+          className="px-6 py-3 bg-black text-white hover:bg-gray-800 transition-colors rounded"
+        >
+          Browse Other Auctions
+        </Link>
       </div>
     );
   }
@@ -537,10 +638,63 @@ export default function AuctionDetails() {
 
             {isUserSeller && (
               <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                <p className="text-sm text-yellow-800">
+                <p className="text-sm text-yellow-800 mb-2">
                   You are the seller of this auction. You cannot place bids on
                   your own listings.
                 </p>
+                <div className="flex gap-2 mt-3">
+                  <Link
+                    href={`/edit-auction/${auction.listingId}`}
+                    className="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Edit Auction
+                  </Link>
+
+                  {/* List as Active button - only show for draft auctions */}
+                  {auction.stringStatus === "Draft" && (
+                    <button
+                      onClick={handleActivateAuction}
+                      className="text-sm px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                    >
+                      List as Active
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {isAdmin && !isUserSeller && (
+              <div className="mb-8 p-4 bg-gray-100 border border-gray-300 rounded-md">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium">Admin Controls</h3>
+                  <span className="text-xs px-2 py-1 bg-yellow-500 text-gray-900 rounded-md">
+                    Admin Access
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/edit-auction/${auction.listingId}`}
+                    className="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Edit Auction
+                  </Link>
+                  <button
+                    onClick={handleDeleteAuction}
+                    className="text-sm px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Delete Auction
+                  </button>
+
+                  {/* List as Active button for admin - only show for draft auctions */}
+                  {auction.stringStatus === "Draft" && (
+                    <button
+                      onClick={handleActivateAuction}
+                      className="text-sm px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                    >
+                      List as Active
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -650,6 +804,19 @@ export default function AuctionDetails() {
                             )}
                           </p>
                         </div>
+
+                        {/* Delete question button - only visible to asker or admin */}
+                        {(isAdmin ||
+                          (isAuthenticated &&
+                            user?.id === question.askerId)) && (
+                          <button
+                            onClick={() => handleDeleteQuestion(question.id)}
+                            className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                            title="Delete question"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
 
                       {question.answerText ? (

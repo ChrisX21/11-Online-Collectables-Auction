@@ -2,6 +2,9 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface Bid {
   listingId: number;
@@ -32,6 +35,7 @@ export interface AuctionItem {
   status: number;
   sellerId: string;
   stringStatus: string;
+  categoryId?: number;
 }
 
 interface AuctionCardProps {
@@ -49,6 +53,26 @@ export default function AuctionCard({
   const currentPrice = item.currentBid
     ? item.currentBid.amount
     : item.startingPrice;
+
+  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const { isAuthenticated } = useAuth();
+  const isFavorited = isFavorite(item.id);
+
+  // Check if auction is active (status === 1)
+  const isActive = item.status === 1;
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the Link from navigating
+
+    // Only allow favoriting/unfavoriting active auctions
+    if (!isActive) return;
+
+    if (isFavorited) {
+      removeFavorite(item.id);
+    } else {
+      addFavorite(item.id);
+    }
+  };
 
   return (
     <Link href={`/auctions/${item.id}`}>
@@ -71,6 +95,35 @@ export default function AuctionCard({
           <div className="absolute top-4 right-4 bg-blue-900/90 text-white px-3 py-1 text-xs rounded-full">
             {item.stringStatus}
           </div>
+
+          {/* Favorite Button (only show for authenticated users and only enable for active auctions) */}
+          {isAuthenticated && (
+            <button
+              onClick={handleFavoriteClick}
+              className={`absolute top-4 left-4 p-2 rounded-full transition-colors duration-200 ${
+                !isActive
+                  ? "bg-gray-300/90 cursor-not-allowed"
+                  : "bg-white/90 hover:bg-white"
+              }`}
+              aria-label={
+                isFavorited ? "Remove from favorites" : "Add to favorites"
+              }
+              disabled={!isActive}
+              title={!isActive ? "Only active auctions can be favorited" : ""}
+            >
+              {isFavorited ? (
+                <FaHeart
+                  className={isActive ? "text-red-500" : "text-gray-400"}
+                  size={16}
+                />
+              ) : (
+                <FaRegHeart
+                  className={isActive ? "text-gray-600" : "text-gray-400"}
+                  size={16}
+                />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Content */}

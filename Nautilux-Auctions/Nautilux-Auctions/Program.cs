@@ -97,6 +97,8 @@ namespace Nautilux_Auctions
             builder.Services.AddScoped<IReviewsService, ReviewsService>();
             builder.Services.AddScoped<IQuestionsRepository, QuestionsRepository>();
             builder.Services.AddScoped<IQuestionsService, QuestionsService>();
+            builder.Services.AddScoped<IWishListService, WishListService>();
+            builder.Services.AddScoped<IWishListRepository, WishListRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddHttpContextAccessor();

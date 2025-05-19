@@ -4,11 +4,14 @@ import Loading from "@/components/loading";
 import AuctionCard, { AuctionItem } from "@/components/AuctionCard";
 import Link from "next/link";
 import api from "@/utils/axios";
+import { useAuth } from "@/context/AuthContext";
 
 // Filter types for the auction list
 type FilterType = "all" | "ending-soon" | "newly-listed" | "high-value";
 
 export default function Auctions() {
+  const { user, isAuthenticated } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [auctions, setAuctions] = useState<AuctionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,11 +20,79 @@ export default function Auctions() {
     "default" | "price-high" | "price-low" | "ending-soon"
   >("default");
 
+  // Category filtering
+  const [categories, setCategories] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [addingCategory, setAddingCategory] = useState(false);
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Create a new category (admin only)
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isAdmin || !newCategoryName.trim()) return;
+
+    setAddingCategory(true);
+    try {
+      const response = await api.post("/categories", {
+        name: newCategoryName.trim(),
+      });
+      setCategories([...categories, response.data]);
+      setNewCategoryName("");
+      setShowCategoryModal(false);
+    } catch (error) {
+      console.error("Failed to create category:", error);
+    } finally {
+      setAddingCategory(false);
+    }
+  };
+
   useEffect(() => {
     async function fetchAuctions() {
       try {
         const response = await api.get("/listings/active");
-        setAuctions(response.data);
+        // Filter out draft auctions for non-sellers/non-admins
+        const filteredAuctions = response.data.filter(
+          (auction: AuctionItem) => {
+            // Always show non-draft auctions
+            if (auction.stringStatus !== "Draft") {
+              return true;
+            }
+
+            // If it's a draft, only show to admin or to the seller
+            if (isAdmin) {
+              return true;
+            }
+
+            // If user is authenticated, check if they're the seller
+            if (isAuthenticated && user && auction.sellerId === user.id) {
+              return true;
+            }
+
+            // Otherwise, don't show draft auctions
+            return false;
+          }
+        );
+
+        setAuctions(filteredAuctions);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch auctions:", error);
@@ -29,7 +100,7 @@ export default function Auctions() {
       }
     }
     fetchAuctions();
-  }, []);
+  }, [isAuthenticated, user, isAdmin]);
 
   // Filter auctions based on search and filter criteria
   const filteredAuctions = auctions
@@ -45,7 +116,14 @@ export default function Auctions() {
       return true;
     })
     .filter((auction) => {
-      // Category filters
+      // Category filter
+      if (selectedCategoryId !== null) {
+        return auction.categoryId === selectedCategoryId;
+      }
+      return true;
+    })
+    .filter((auction) => {
+      // Status filters
       const now = new Date();
       const endDate = new Date(auction.endDate);
       const timeRemaining = endDate.getTime() - now.getTime();
@@ -145,6 +223,32 @@ export default function Auctions() {
                 </svg>
               </div>
             </div>
+
+            <div className="flex-shrink-0">
+              <select
+                className="px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-black appearance-none bg-white pr-8 pl-4"
+                value={selectedCategoryId || ""}
+                onChange={(e) =>
+                  setSelectedCategoryId(
+                    e.target.value ? Number(e.target.value) : null
+                  )
+                }
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                  backgroundSize: "1rem",
+                }}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="flex-shrink-0">
               <select
                 className="px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-black appearance-none bg-white pr-8 pl-4"
@@ -163,6 +267,15 @@ export default function Auctions() {
                 <option value="ending-soon">Ending Soon</option>
               </select>
             </div>
+
+            {isAdmin && (
+              <button
+                onClick={() => setShowCategoryModal(true)}
+                className="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Add Category
+              </button>
+            )}
           </div>
 
           {/* Filter buttons */}
@@ -226,6 +339,7 @@ export default function Auctions() {
                 setSearchQuery("");
                 setActiveFilter("all");
                 setSortBy("default");
+                setSelectedCategoryId(null);
               }}
               className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
             >
@@ -240,6 +354,46 @@ export default function Auctions() {
           </div>
         )}
       </div>
+
+      {/* Add Category Modal for admins */}
+      {showCategoryModal && isAdmin && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-medium mb-4">Add New Category</h2>
+            <form onSubmit={handleCreateCategory}>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter category name"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addingCategory || !newCategoryName.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+                >
+                  {addingCategory ? "Adding..." : "Add Category"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

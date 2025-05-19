@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Nautilux_Auctions.Application.Abstracts;
 using Nautilux_Auctions.Domain.DTO;
 using Nautilux_Auctions.Domain.Requests;
@@ -76,6 +77,24 @@ namespace Nautilux_Auctions.Controllers
             await _accountService.Logout(refreshToken);
             
             return Ok(new { message = "User logged out successfully." });
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequest userDetails)
+        {
+            if (userDetails == null)
+            {
+                return BadRequest("Invalid request payload.");
+            }
+
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            await _accountService.UpdateUser(userId, userDetails);
+            return Ok(new { message = "User details updated successfully." });
         }
     }
 }

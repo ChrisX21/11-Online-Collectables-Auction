@@ -9,6 +9,7 @@ import {
   FaUser,
   FaSignOutAlt,
   FaHistory,
+  FaHeart,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -63,6 +64,12 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="hidden md:flex items-center space-x-3">
+                <Link
+                  href="/favorites"
+                  className="flex items-center space-x-1 text-white hover:text-gray-200 transition-colors text-sm"
+                >
+                  <FaHeart className="w-4 h-4" />
+                </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 text-white hover:text-gray-200 transition-colors text-sm">
                     <span className="font-light">{user?.firstName}</span>
@@ -73,6 +80,12 @@ export default function Navbar() {
                       className="block px-4 py-1.5 text-gray-800 hover:bg-gray-100 text-sm"
                     >
                       Profile
+                    </Link>
+                    <Link
+                      href="/favorites"
+                      className="block px-4 py-1.5 text-gray-800 hover:bg-gray-100 text-sm"
+                    >
+                      Favorites
                     </Link>
                     <button
                       onClick={logout}
@@ -189,6 +202,16 @@ export default function Navbar() {
               >
                 <span className="text-lg">About</span>
               </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/favorites"
+                  className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-800 rounded-md transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <FaHeart className="w-5 h-5" />
+                  <span className="text-lg">Favorites</span>
+                </Link>
+              )}
             </div>
 
             {isAuthenticated ? (

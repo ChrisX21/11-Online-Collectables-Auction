@@ -5,8 +5,7 @@ import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import LoadingScreen from "@/components/loading-screen";
 import { Suspense } from "react";
-import { AuthProvider } from "@/context/AuthContext";
-import { Toaster } from "react-hot-toast";
+import { Providers } from "./providers";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -28,12 +27,11 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${montserrat.className} antialiased`}
       >
-        <AuthProvider>
+        <Providers>
           <Navbar />
           <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
           <Footer />
-          <Toaster position="top-right" />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

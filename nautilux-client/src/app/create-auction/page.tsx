@@ -614,16 +614,6 @@ export default function CreateAuction() {
                       disabled={uploadingImage}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
                     />
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        placeholder="Image caption (optional)"
-                        value={imageCaption}
-                        onChange={(e) => setImageCaption(e.target.value)}
-                        disabled={uploadingImage}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
-                      />
-                    </div>
                     <button
                       type="button"
                       onClick={handleImageUpload}
@@ -725,21 +715,6 @@ export default function CreateAuction() {
                       className="px-6 py-3 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed w-full sm:w-auto"
                     >
                       {isSubmitting ? "Creating Auction..." : "Create Auction"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          isActive: false,
-                        });
-                        handleSubmit;
-                      }}
-                      disabled={isSubmitting || formData.images.length === 0}
-                      className="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed w-full sm:w-auto"
-                    >
-                      Save as Draft
                     </button>
                   </div>
                 </div>

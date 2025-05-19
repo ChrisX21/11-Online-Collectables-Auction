@@ -173,9 +173,14 @@ export default function EditAuction() {
     }
   }, [isAuthenticated, isLoading, router, id]);
 
-  // Check if user owns this auction
+  // Check if user owns this auction or is admin
   useEffect(() => {
-    if (originalAuction && user && originalAuction.sellerId !== user.id) {
+    if (
+      originalAuction &&
+      user &&
+      originalAuction.sellerId !== user.id &&
+      user.role !== "Admin"
+    ) {
       toast.error("You don't have permission to edit this auction");
       router.push(`/auctions/${id}`);
     }
@@ -191,7 +196,10 @@ export default function EditAuction() {
 
   if (
     !isAuthenticated ||
-    (originalAuction && user && originalAuction.sellerId !== user.id)
+    (originalAuction &&
+      user &&
+      originalAuction.sellerId !== user.id &&
+      user.role !== "Admin")
   ) {
     return null;
   }
@@ -319,8 +327,8 @@ export default function EditAuction() {
       const apiData = {
         ...formData,
         listingId: Number(id),
-        sellerId: user?.id,
         stringCondition: formData.condition,
+        sellerId: originalAuction.sellerId,
         stringShippingOptions: formData.shippingOptions,
         stringStatus: formData.isActive ? "Active" : "Draft",
       };
@@ -703,17 +711,7 @@ export default function EditAuction() {
                     className="w-full"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-2">
-                    Caption
-                  </label>
-                  <input
-                    type="text"
-                    value={imageCaption}
-                    onChange={(e) => setImageCaption(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
-                  />
-                </div>
+                
                 <button
                   type="button"
                   onClick={handleImageUpload}

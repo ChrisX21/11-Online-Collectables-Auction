@@ -1,4 +1,4 @@
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Nautilux_Auctions.Application.Abstracts;
 using Nautilux_Auctions.Domain.Entities;
 
@@ -18,17 +18,22 @@ public class WishListRepository : IWishListRepository
         await _context.WatchListItems.AddAsync(watchListItem);
     }
 
-    public Task RemoveFromWishListAsync(WatchListItem watchListItem)
+    public async Task RemoveFromWishListAsync(WatchListItem watchListItem)
     {
-        _context.Remove(watchListItem);
-        return Task.CompletedTask;
+        var existingItem = await _context.WatchListItems
+            .FirstOrDefaultAsync(wli => wli.UserId == watchListItem.UserId && wli.ListingId == watchListItem.ListingId);
+            
+        if (existingItem != null)
+        {
+            _context.WatchListItems.Remove(existingItem);
+        }
     }
 
-    public async Task<IEnumerable<int>> GetWishListByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<WatchListItem>> GetWishListByUserIdAsync(Guid userId)
     {
-        return await _context.WatchListItems    
-            .Where(w => w.UserId == userId)
-            .Select(w => w.ListingId)
+        return await _context.WatchListItems.Where(wli => wli.UserId == userId)
+            .Include(wli => wli.Listing)
             .ToListAsync();
     }
 }
+

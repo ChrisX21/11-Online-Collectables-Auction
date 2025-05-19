@@ -42,6 +42,7 @@ public class ListingService : IListingService
                 Status = listing.Status,
                 StringStatus = listing.Status.ToString(),
                 SellerId = listing.SellerId,
+                CategoryId = listing.CategoryId,
                 Image = listing.Images.Select(imageDto => new Image
                 {
                     Url = imageDto.Url,
@@ -79,6 +80,7 @@ public class ListingService : IListingService
                 Status = listing.Status,
                 SellerId = listing.SellerId,
                 StringStatus = listing.Status.ToString(),
+                CategoryId = listing.CategoryId,
                 Image = listing.Images.Select(imageDto => new Image
                 {
                     Url = imageDto.Url,
@@ -172,7 +174,7 @@ public class ListingService : IListingService
                 BuyNowPrice = listing.BuyNowPrice,
                 IsFeatured = listing.IsFeatured,
                 IsActive = true,
-                Condition = Enum.Parse<ListingCondition>(listing.StringCondition, ignoreCase: true),
+                Condition = Enum.Parse<ListingCondition>(listing.StringCondition.Replace(" ", ""), ignoreCase: true),
                 Origin = listing.Origin,
                 Year = listing.Year,
                 Dimensions = listing.Dimensions,
@@ -251,7 +253,7 @@ public class ListingService : IListingService
             existingListing.BuyNowPrice = listing.BuyNowPrice;
             existingListing.IsFeatured = listing.IsFeatured;
             existingListing.IsActive = listing.IsActive;
-            existingListing.Condition = Enum.Parse<ListingCondition>(listing.StringCondition, ignoreCase: true);
+            existingListing.Condition = Enum.Parse<ListingCondition>(listing.StringCondition.Replace(" ", ""), ignoreCase: true);
             existingListing.Origin = listing.Origin;
             existingListing.Year = listing.Year;
             existingListing.Dimensions = listing.Dimensions;
@@ -259,6 +261,7 @@ public class ListingService : IListingService
             existingListing.AuthenticityId = listing.AuthenticityId;
             existingListing.ShippingOptions = Enum.Parse<ShippingOption>(listing.StringShippingOptions, ignoreCase: true);
             existingListing.Status = Enum.Parse<ListingStatus>(listing.StringStatus, ignoreCase: true);
+            existingListing.UpdatedAt = DateTime.Now;
             
             var updatedListing = await _unitOfWork.Listings.UpdateListingAsync(existingListing);
             if (updatedListing == null)
@@ -295,6 +298,8 @@ public class ListingService : IListingService
                     DisplayOrder = image.DisplayOrder,
                 }).ToList(),
                 SellerId = listing.SellerId,
+                UpdatedAt = updatedListing.UpdatedAt,
+                CreatedAt = updatedListing.CreatedAt,
             };
             
             return response;
@@ -370,6 +375,17 @@ public class ListingService : IListingService
                 ReservePrice = listing.ReservePrice,
                 SellerId = listing.SellerId,
                 StringStatus = listing.Status.ToString(),
+                Status = listing.Status,
+                CurrentBid = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result != null
+                    ? new BidDto
+                    {
+                        BidId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Id,
+                        Amount = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Amount,
+                        UserId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.BidderId,
+                        listingId = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.ListingId,
+                        Timestamp = _unitOfWork.Bids.GetCurrentBidForListing(listing).Result.Timestamp
+                    }
+                    : null,
                 Images = listing.Images.Select(image => new ImageResponseDto()
                 {
                     Id = image.Id,

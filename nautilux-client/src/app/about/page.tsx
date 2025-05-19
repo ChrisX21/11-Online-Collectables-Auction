@@ -3,8 +3,9 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useAuth } from "@/context/AuthContext";
 export default function About() {
+  const { isAuthenticated } = useAuth();
   return (
     <main className="pt-16">
       {/* Hero Section */}
@@ -193,12 +194,16 @@ export default function About() {
             >
               Browse Auctions
             </Link>
-            <Link
-              href="/auth/sign-up"
-              className="px-6 py-3 border border-white hover:bg-white/10 transition-colors rounded-lg text-white font-medium"
-            >
-              Create Account
-            </Link>
+            {
+              !isAuthenticated && (
+                <Link
+                  href="/auth/sign-up"
+                  className="px-6 py-3 border border-white hover:bg-white/10 transition-colors rounded-lg text-white font-medium"
+                >
+                  Create Account
+                </Link>
+              )
+            }
           </div>
         </div>
       </section>

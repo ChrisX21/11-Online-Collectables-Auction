@@ -10,6 +10,7 @@ public class ListingsDto
     public string Title { get; set; }
     public string Description { get; set; }
     public decimal StartingPrice { get; set; }
+    public int CategoryId { get; set; }
     public Image? Image { get; set; }
     public BidDto? CurrentBid { get; set; }
     public DateTime EndDate { get; set; }

@@ -10,6 +10,7 @@ namespace Nautilux_Auctions.Application.Abstracts
         Task LoginAsync(LoginRequest loginRequest);
         Task RefreshTokenAsync(string refreshToken);
         Task<UserDetailsDto> GetUserDetails(string refreshToken);
+        Task UpdateUser(Guid userId, UpdateUserRequest updateUserRequest);
         Task Logout(string refreshToken);
     }
 }

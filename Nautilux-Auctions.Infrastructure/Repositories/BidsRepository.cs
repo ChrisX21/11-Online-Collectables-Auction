@@ -41,4 +41,11 @@ public class BidsRepository : IBidsRepository
             .OrderByDescending(b => b.Amount)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<IEnumerable<Bid>> GetAllBidsForUser(Guid userId)
+    {
+        return await _context.Bids
+            .Where(b => b.BidderId == userId)
+            .ToListAsync();
+    }
 }

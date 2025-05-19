@@ -74,5 +74,19 @@ public class BidsService : IBidsService
             }
         };
     }
+    
+    public async Task<IEnumerable<BidDto>> GetAllBidsForUser(Guid userId)
+    {
+        var bids = await _unitOfWork.Bids.GetAllBidsForUser(userId);
+        
+        return bids.Select(b => new BidDto
+        {
+            listingId = b.ListingId,
+            BidId = b.Id,
+            UserId = b.BidderId,
+            Amount = b.Amount,
+            Timestamp = b.Timestamp
+        }).ToList();
+    }
 
 }

@@ -8,4 +8,5 @@ public interface IBidsRepository
     Task<Bid?> GetHighestBidForListing(int listingId);
     Task<IEnumerable<Bid>> GetBidHistory(int listingId);
     Task<Bid?> GetCurrentBidForListing(Listing listing);
+    Task<IEnumerable<Bid>> GetAllBidsForUser(Guid userId);
 }

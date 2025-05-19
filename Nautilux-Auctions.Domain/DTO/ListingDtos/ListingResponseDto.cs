@@ -1,3 +1,4 @@
+using Nautilux_Auctions.Domain.DTO.BidsDto;
 using Nautilux_Auctions.Domain.DTO.ImageDtos;
 using Nautilux_Auctions.Domain.Enums;
 
@@ -28,5 +29,8 @@ public class ListingResponseDto
     public Guid SellerId { get; set; }
     public ListingStatus Status { get; set; }
     public string StringStatus { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public BidDto CurrentBid { get; set; } = null!;
     public ICollection<ImageResponseDto> Images { get; set; } = new List<ImageResponseDto>();
 }

@@ -155,5 +155,25 @@ namespace Nautilux_Auctions.Application.Services
             await _userManager.UpdateAsync(user);
             
         }
+
+        public async Task UpdateUser(Guid userId, UpdateUserRequest updateUserRequest)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new UnauthorizedException("Unable to retrieve user for refresh token");
+            }
+
+            user.FirstName = updateUserRequest.FirstName;
+            user.LastName = updateUserRequest.LastName;
+            user.Email = updateUserRequest.Email;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.Select(x => x.Description).ToString());
+            }
+        }
     }
 }
