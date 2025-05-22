@@ -164,30 +164,117 @@ export default function CreateAuction() {
     if (!imageFile) return;
 
     setUploadingImage(true);
+    setError(null);
 
-    const imageUrl = URL.createObjectURL(imageFile);
+    try {
+      // First compress the image, then convert to base64
+      const compressedBase64 = await compressAndConvertToBase64(imageFile);
 
-    setUploadedImages([
-      ...uploadedImages,
-      { url: imageUrl, caption: imageCaption },
-    ]);
+      setUploadedImages([
+        ...uploadedImages,
+        { url: compressedBase64, caption: imageCaption },
+      ]);
 
-    setFormData({
-      ...formData,
-      images: [
-        ...formData.images,
-        {
-          url: imageUrl,
-          isPrimary: formData.images.length === 0,
-          caption: imageCaption,
-          displayOrder: formData.images.length,
-        },
-      ],
+      setFormData({
+        ...formData,
+        images: [
+          ...formData.images,
+          {
+            url: compressedBase64,
+            isPrimary: formData.images.length === 0,
+            caption: imageCaption,
+            displayOrder: formData.images.length,
+          },
+        ],
+      });
+
+      setImageFile(null);
+      setImageCaption("");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to process image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const compressAndConvertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+
+      reader.onload = (event) => {
+        if (!event.target?.result) {
+          reject(new Error("Failed to read file"));
+          return;
+        }
+
+        // Create an image element to compress
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+
+        img.onload = () => {
+          // Create a canvas with reduced dimensions
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions while maintaining aspect ratio
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          // Draw compressed image on canvas
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Could not get canvas context"));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert canvas to base64 with reduced quality
+          const quality = 0.7; // Adjust compression level (0.7 = 70% quality)
+          const base64 = canvas.toDataURL(file.type, quality);
+
+          // Release object URL
+          URL.revokeObjectURL(img.src);
+
+          resolve(base64);
+        };
+
+        img.onerror = () => {
+          reject(new Error("Failed to load image"));
+        };
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
     });
+  };
 
-    setImageFile(null);
-    setImageCaption("");
-    setUploadingImage(false);
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   const handleRemoveImage = (index: number) => {

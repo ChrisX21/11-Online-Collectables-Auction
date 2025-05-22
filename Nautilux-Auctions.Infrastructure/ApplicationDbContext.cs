@@ -104,7 +104,7 @@ namespace Nautilux_Auctions.Infrastructure
                 .HasOne(b => b.Listing)
                 .WithMany(l => l.Bids)
                 .HasForeignKey(b => b.ListingId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
                 
             //Listing
             builder.Entity<Listing>()
@@ -226,3 +226,4 @@ namespace Nautilux_Auctions.Infrastructure
         }
     }
 }
+

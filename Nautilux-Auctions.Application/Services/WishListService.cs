@@ -44,14 +44,14 @@ public class WishListService : IWishListService
         });
     }
 
-    public Task RemoveFromWishListAsync(Guid userId, int listingId)
+    public async Task RemoveFromWishListAsync(Guid userId, int listingId)
     {
         var watchListItem = new WatchListItem
         {
             UserId = userId,
             ListingId = listingId
         };
-        _unitOfWork.WishLists.RemoveFromWishListAsync(watchListItem);
-        return _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.WishLists.RemoveFromWishListAsync(watchListItem);
+        await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -19,3 +19,12 @@ body {
   background: var(--background);
   font-family: var(--font-montserrat);
 }
+
+nextjs-portal {
+  display: none;
+}
+
+.nextjs-portal-container {
+  display: none;
+}
+
