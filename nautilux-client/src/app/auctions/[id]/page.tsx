@@ -520,9 +520,20 @@ export default function AuctionDetails() {
                         {bid.userName || `User ${bid.userId.slice(0, 6)}`}
                       </span>
                       <div className="flex items-center">
-                        <span className="font-medium">
-                          ${bid.amount.toFixed(2)}
-                        </span>
+                        {isAuthenticated ? (
+                          <span className="font-medium">
+                            ${bid.amount.toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="font-medium text-blue-900">
+                            <Link
+                              href="/auth/sign-in"
+                              className="hover:underline"
+                            >
+                              Sign in to view
+                            </Link>
+                          </span>
+                        )}
                         <span className="text-xs text-gray-500 ml-2">
                           {formatDistanceToNow(new Date(bid.timestamp), {
                             addSuffix: true,
@@ -560,13 +571,24 @@ export default function AuctionDetails() {
             <div className="flex flex-wrap justify-between items-center mb-6 pb-6 border-b border-gray-200">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Current Bid</p>
-                <p className="text-3xl font-light">
-                  $
-                  {currentBid
-                    ? currentBid.amount.toFixed(2)
-                    : auction.startingPrice.toFixed(2)}
-                </p>
-                {auction.reservePrice && (
+                {isAuthenticated ? (
+                  <p className="text-3xl font-light">
+                    $
+                    {currentBid
+                      ? currentBid.amount.toFixed(2)
+                      : auction.startingPrice.toFixed(2)}
+                  </p>
+                ) : (
+                  <p className="text-3xl font-light">
+                    <Link
+                      href="/auth/sign-in"
+                      className="text-blue-900 hover:underline"
+                    >
+                      Sign in to view price
+                    </Link>
+                  </p>
+                )}
+                {isAuthenticated && auction.reservePrice && (
                   <p className="text-sm text-gray-500 mt-1">
                     Reserve price: ${auction.reservePrice.toFixed(2)}
                   </p>

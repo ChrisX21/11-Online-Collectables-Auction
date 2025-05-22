@@ -138,7 +138,17 @@ export default function AuctionCard({
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-xs">Current Bid</p>
-              <p className="text-lg font-medium">${currentPrice.toFixed(2)}</p>
+              {isAuthenticated ? (
+                <p className="text-lg font-medium">
+                  ${currentPrice.toFixed(2)}
+                </p>
+              ) : (
+                <p className="text-lg font-medium">
+                  <span className="text-blue-900 hover:underline">
+                    Sign in to view
+                  </span>
+                </p>
+              )}
             </div>
             <div className="text-right">
               <p className="text-gray-500 text-xs">Ends</p>

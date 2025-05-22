@@ -257,10 +257,20 @@ export default function Home() {
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-lg">
-                      $
-                      {item.currentBid
-                        ? item.currentBid.amount.toFixed(2)
-                        : item.startingPrice.toFixed(2)}
+                      {isAuthenticated ? (
+                        `$${
+                          item.currentBid
+                            ? item.currentBid.amount.toFixed(2)
+                            : item.startingPrice.toFixed(2)
+                        }`
+                      ) : (
+                        <Link
+                          href="/auth/sign-in"
+                          className="text-white hover:underline"
+                        >
+                          Sign in to view
+                        </Link>
+                      )}
                     </span>
                     <Link
                       href={`/auctions/${item.id}`}
