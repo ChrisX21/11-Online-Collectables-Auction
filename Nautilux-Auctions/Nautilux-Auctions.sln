@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Application", "..\Nautilux-Auctions.Application\Nautilux-Auctions.Application.csproj", "{24259DF3-423B-4253-9335-9F6718B84457}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nautilux-Auctions.Tests", "Nautilux-Auctions.Tests\Nautilux-Auctions.Tests.csproj", "{0BE689D8-173F-4738-B186-63C6094D0BDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{24259DF3-423B-4253-9335-9F6718B84457}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24259DF3-423B-4253-9335-9F6718B84457}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24259DF3-423B-4253-9335-9F6718B84457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BE689D8-173F-4738-B186-63C6094D0BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BE689D8-173F-4738-B186-63C6094D0BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BE689D8-173F-4738-B186-63C6094D0BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BE689D8-173F-4738-B186-63C6094D0BDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
